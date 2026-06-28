@@ -4,41 +4,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="center"
     android:background="@drawable/widget_bg"
     android:padding="16dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
-
-        <ImageView
-            android:layout_width="34dp"
-            android:layout_height="34dp"
-            android:src="@drawable/hedwig_logo"
-            android:contentDescription="@string/app_name" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="10dp"
-            android:text="@string/app_name"
-            android:textColor="#FFFFFF"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:maxLines="1" />
-    </LinearLayout>
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/hedwig_logo"
+        android:contentDescription="@string/app_name" />
 
     <TextView
         android:id="@+id/w_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:gravity="center"
         android:text="🟢  守护中"
         android:textColor="#FFFFFF"
-        android:textSize="16sp"
+        android:textSize="17sp"
         android:textStyle="bold" />
 
     <TextView
@@ -46,17 +30,33 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
+        android:gravity="center"
         android:text="🔋 —   📈 0"
         android:textColor="#CCFFFFFF"
         android:textSize="13sp" />
 
+    <!-- 已配置的转发路径（面积够大时显示）/ configured forwarding routes (shown when tall enough) -->
+    <TextView
+        android:id="@+id/w_channels"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:maxLines="2"
+        android:text=""
+        android:textColor="#9FE9CF"
+        android:textSize="12sp"
+        android:visibility="gone" />
+
     <TextView
         android:id="@+id/w_toggle"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="14dp"
         android:background="@drawable/widget_button_bg"
         android:gravity="center"
+        android:minWidth="150dp"
+        android:paddingHorizontal="22dp"
         android:paddingVertical="9dp"
         android:text="@string/widget_start"
         android:textColor="#FFFFFF"

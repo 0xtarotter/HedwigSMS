@@ -33,6 +33,8 @@ const VALID_TYPES = new Set([
   "power_connected",
   "power_disconnected",
   "heartbeat",
+  "service_on",
+  "service_off",
 ]);
 
 /* ============================ 工具 / utils ============================ */
@@ -120,6 +122,26 @@ function formatMessage(payload) {
           `💚 设备平安报告 | Device Health Report\n${sep}\n` +
           `📱 设备 Device：${device}\n🔋 当前电量 Level：${level}%\n🌐 网络状态 Network：正常 OK\n🕒 时间 Time：${time}\n${sep}\n` +
           `🛡️ Hedwig 正在守护中 / Hedwig is on guard.`,
+      };
+    }
+    case "service_on": {
+      const level = data.battery_level ?? "?";
+      return {
+        title: "✅ 守护已开启 Guard Started",
+        text:
+          `✅ 守护已开启 | Guard Started\n${sep}\n` +
+          `📱 设备 Device：${device}\n🔋 当前电量 Level：${level}%\n🕒 时间 Time：${time}\n${sep}\n` +
+          `🛡️ Hedwig 开始守护，短信将实时转发。`,
+      };
+    }
+    case "service_off": {
+      const level = data.battery_level ?? "?";
+      return {
+        title: "🛑 守护已停止 Guard Stopped",
+        text:
+          `🛑 守护已停止 | Guard Stopped\n${sep}\n` +
+          `📱 设备 Device：${device}\n🔋 当前电量 Level：${level}%\n🕒 时间 Time：${time}\n${sep}\n` +
+          `⚠️ 短信将不再转发，请留意！`,
       };
     }
     default:

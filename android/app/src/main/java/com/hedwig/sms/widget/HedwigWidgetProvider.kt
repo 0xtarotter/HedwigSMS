@@ -27,6 +27,15 @@ class HedwigWidgetProvider : AppWidgetProvider() {
         ids.forEach { renderOne(context, mgr, it) }
     }
 
+    override fun onAppWidgetOptionsChanged(
+        context: Context,
+        mgr: AppWidgetManager,
+        id: Int,
+        newOptions: android.os.Bundle?,
+    ) {
+        renderOne(context, mgr, id)
+    }
+
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
         if (intent.action == Constants.ACTION_WIDGET_STOP) {
@@ -53,6 +62,18 @@ class HedwigWidgetProvider : AppWidgetProvider() {
         val bat = if (s.battery in 0..100) "🔋 ${s.battery}%" else "🔋 —"
         rv.setTextViewText(R.id.w_stats, "$bat   📈 ${s.count}")
 
+        // 转发路径：面积够大时显示已配置渠道 / show configured routes when tall enough
+        val minH = runCatching {
+            mgr.getAppWidgetOptions(id).getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 0)
+        }.getOrDefault(0)
+        val routes = channelSummary(context)
+        if (minH >= 130 && routes.isNotEmpty()) {
+            rv.setTextViewText(R.id.w_channels, routes)
+            rv.setViewVisibility(R.id.w_channels, android.view.View.VISIBLE)
+        } else {
+            rv.setViewVisibility(R.id.w_channels, android.view.View.GONE)
+        }
+
         // 整块点按 → 打开 App / whole widget → open app
         rv.setOnClickPendingIntent(R.id.w_root, openAppIntent(context, autostart = false))
 
@@ -66,6 +87,28 @@ class HedwigWidgetProvider : AppWidgetProvider() {
         }
 
         mgr.updateAppWidget(id, rv)
+    }
+
+    /** 已配置的转发路径摘要 / summary of configured forwarding routes. */
+    private fun channelSummary(context: Context): String {
+        val prefs = SecurePrefs(context)
+        if (prefs.mode == SecurePrefs.MODE_DIRECT) {
+            val labels = com.hedwig.sms.model.ChannelConfig.fromJson(prefs.channelConfigJson)
+                .configuredIds().map {
+                    when (it) {
+                        com.hedwig.sms.model.ChannelConfig.ID_TELEGRAM -> "✈️ Telegram"
+                        com.hedwig.sms.model.ChannelConfig.ID_FEISHU -> "🐦 飞书"
+                        com.hedwig.sms.model.ChannelConfig.ID_DISCORD -> "🎮 Discord"
+                        com.hedwig.sms.model.ChannelConfig.ID_SLACK -> "💬 Slack"
+                        com.hedwig.sms.model.ChannelConfig.ID_CUSTOM -> "🔗 Webhook"
+                        com.hedwig.sms.model.ChannelConfig.ID_EMAIL -> "✉️ Email"
+                        else -> it
+                    }
+                }
+            return labels.joinToString("   ")
+        }
+        // 中转模式渠道在云端，App 不可知 / relay channels live in the cloud.
+        return if (prefs.workerUrl.isNotBlank()) "☁️ 中转模式 Relay" else ""
     }
 
     private fun openAppIntent(context: Context, autostart: Boolean): PendingIntent {

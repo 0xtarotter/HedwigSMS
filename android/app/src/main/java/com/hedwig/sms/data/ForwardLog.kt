@@ -19,4 +19,6 @@ data class ForwardLog(
     val statusCode: Int = 0,
     /** 简要详情：发件人 / 内容摘要 / 错误信息 / brief detail. */
     val detail: String = "",
+    /** 接收该短信的卡/号码（用于过滤）/ receiving SIM/number (for filtering). */
+    val sim: String? = null,
 )

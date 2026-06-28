@@ -7,6 +7,7 @@
     <string name="notif_guarding">🟢 Hedwig on guard | 🔋 Battery: %1$d%% | 📈 Forwarded: %2$d</string>
     <string name="notif_forwarding">🔄 Forwarding message from [%1$s]…</string>
     <string name="notif_failed">⚠️ Last forward failed, please check the network</string>
+    <string name="notif_minimal">🟢 Hedwig is on guard</string>
 
     <string name="status_guarding">On guard</string>
     <string name="status_forwarding">Forwarding…</string>
@@ -21,7 +22,7 @@
     <string name="field_device_name">Device Name</string>
     <string name="btn_save">Save</string>
     <string name="btn_scan_import">📷 Scan to import config</string>
-    <string name="btn_show_qr">🔳 My config QR</string>
+    <string name="btn_show_qr">🔳 Config QR</string>
     <string name="qr_dialog_title">Config QR</string>
     <string name="qr_dialog_hint">Scan this with HedwigSMS on another phone to sync the config.\n⚠️ Contains a sensitive token — do not share or screenshot.</string>
     <string name="qr_close">Close</string>
@@ -49,8 +50,8 @@
     <string name="ch_title">IM channel config</string>
     <string name="ch_intro">Direct mode: fill any channel → tap “Test” to verify → “Save”. No server needed.\n⚠️ Telegram/Discord/Slack need the phone to reach their servers (e.g. via a proxy) in China.</string>
     <string name="ch_save">💾 Save all</string>
-    <string name="ch_export_qr">🔳 Export config QR</string>
-    <string name="ch_scan_import">📷 Scan to import config</string>
+    <string name="ch_export_qr">🔳 Export QR</string>
+    <string name="ch_scan_import">📷 Scan import</string>
     <string name="ch_qr_title">Config QR (all channels)</string>
     <string name="ch_qr_hint">Scan with “Scan to import config” in HedwigSMS on another phone to sync everything.\n⚠️ Contains all secrets — do not share or screenshot.</string>
     <string name="ch_qr_close">Close</string>
@@ -78,7 +79,7 @@
     <string name="btn_start">Start guard</string>
     <string name="btn_stop">Stop</string>
     <string name="btn_test">📨 Send test message</string>
-    <string name="btn_simulate_sms">🧪 Simulate incoming SMS (test forwarding)</string>
+    <string name="btn_simulate_sms">🧪 Simulate SMS</string>
     <string name="sim_sms_sender">10086 (Simulated)</string>
     <string name="sim_sms_sim">SIM2 · Carrier · 138****8888 (sim.)</string>
     <string name="sim_sms_body">[HedwigSMS] Your verification code is 886623, valid for 5 minutes. Sent by the “Simulate SMS” feature to test the forwarding chain.</string>
@@ -88,10 +89,10 @@
 
     <string name="section_permissions">③ Permissions &amp; keep-alive</string>
     <string name="perm_hint">For real-time SMS forwarding, grant each permission and disable battery optimization for this app.</string>
-    <string name="btn_perm_sms">Grant \"Receive SMS\"</string>
-    <string name="btn_perm_notif">Grant \"Notifications\"</string>
-    <string name="btn_perm_battery">Disable battery optimization (strongly recommended)</string>
-    <string name="btn_perm_sim">Grant \"Read SIM info\" (multi-SIM receiving number)</string>
+    <string name="btn_perm_sms">Grant SMS permission</string>
+    <string name="btn_perm_notif">Grant notifications</string>
+    <string name="btn_perm_battery">Disable battery optimization</string>
+    <string name="btn_perm_sim">Grant SIM info (multi-SIM)</string>
 
     <string name="section_logs">④ Forwarding logs (latest 50)</string>
     <string name="logs_empty">No records yet. After configuring, tap \"Send test message\".</string>
@@ -114,6 +115,27 @@
     <!-- ============ top bar ============ -->
     <string name="menu_help">Help</string>
     <string name="action_back">Back</string>
+    <string name="menu_settings">Settings</string>
+    <string name="settings_title">Settings</string>
+    <string name="set_auto_update">Auto-check updates on launch</string>
+    <string name="set_boot_autostart">Auto-start guard on boot</string>
+    <string name="set_heartbeat">Daily health report</string>
+    <string name="set_notification">Persistent status notification (details)</string>
+    <string name="set_daily_time">Daily report time</string>
+    <string name="set_language">Language</string>
+    <string name="lang_system">Follow system</string>
+    <string name="lang_zh">简体中文</string>
+    <string name="lang_en">English</string>
+    <string name="settings_section_general">General</string>
+    <string name="settings_section_data">Data</string>
+    <string name="settings_view_logs">View full logs</string>
+
+    <!-- logs screen -->
+    <string name="logs_title">Forwarding logs</string>
+    <string name="logs_search_hint">Search sender / content / type</string>
+    <string name="logs_filter_all">All</string>
+    <string name="logs_view_all">View full logs →</string>
+    <string name="logs_empty_filtered">No matching records</string>
 
     <!-- ============ onboarding ============ -->
     <string name="ob_skip">Skip</string>

@@ -27,6 +27,11 @@ object HeartbeatScheduler {
 
     fun schedule(context: Context) {
         val prefs = SecurePrefs(context)
+        // 设置里关闭「每日平安报告」则不排定 / skip if disabled in Settings.
+        if (!prefs.heartbeatEnabled) {
+            cancel(context)
+            return
+        }
         val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val pi = buildPendingIntent(context)
 

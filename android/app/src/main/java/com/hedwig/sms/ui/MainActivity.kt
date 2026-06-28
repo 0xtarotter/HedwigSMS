@@ -16,6 +16,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -45,6 +46,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -78,6 +80,10 @@ import java.util.Locale
 
 class MainActivity : ComponentActivity() {
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(com.hedwig.sms.core.LocaleHelper.wrap(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         maybeAutoStart(intent)
@@ -105,7 +111,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private enum class Screen { ONBOARDING, MAIN, HELP, CHANNELS }
+private enum class Screen { ONBOARDING, MAIN, HELP, CHANNELS, SETTINGS, LOGS }
 
 @Composable
 private fun AppRoot() {
@@ -117,10 +123,12 @@ private fun AppRoot() {
     }
     var update by remember { mutableStateOf<com.hedwig.sms.net.UpdateChecker.UpdateInfo?>(null) }
 
-    // 启动时静默检查更新 / silent update check on launch
+    // 启动时静默检查更新（可在设置里关闭）/ silent update check on launch (toggleable in Settings)
     androidx.compose.runtime.LaunchedEffect(Unit) {
-        (com.hedwig.sms.net.UpdateChecker.check(com.hedwig.sms.BuildConfig.VERSION_NAME)
-            as? com.hedwig.sms.net.UpdateChecker.Result.Available)?.let { update = it.info }
+        if (prefs.autoCheckUpdate) {
+            (com.hedwig.sms.net.UpdateChecker.check(com.hedwig.sms.BuildConfig.VERSION_NAME)
+                as? com.hedwig.sms.net.UpdateChecker.Result.Available)?.let { update = it.info }
+        }
     }
     fun manualCheck() {
         toast(context, R.string.update_checking)
@@ -143,12 +151,20 @@ private fun AppRoot() {
         Screen.MAIN -> HedwigScreen(
             onOpenHelp = { screen = Screen.HELP },
             onOpenChannels = { screen = Screen.CHANNELS },
+            onOpenLogs = { screen = Screen.LOGS },
         )
         Screen.HELP -> HelpScreen(
             onBack = { screen = Screen.MAIN },
             onReplayOnboarding = { screen = Screen.ONBOARDING },
             onCheckUpdate = { manualCheck() },
+            onOpenSettings = { screen = Screen.SETTINGS },
         )
+        Screen.SETTINGS -> SettingsScreen(
+            onBack = { screen = Screen.HELP },
+            onOpenLogs = { screen = Screen.LOGS },
+            onLanguageChanged = { (context as? android.app.Activity)?.recreate() },
+        )
+        Screen.LOGS -> LogsScreen(onBack = { screen = Screen.MAIN })
         Screen.CHANNELS -> ChannelsScreen(onBack = { screen = Screen.MAIN })
     }
 
@@ -199,7 +215,7 @@ private fun UpdateDialog(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun HedwigScreen(onOpenHelp: () -> Unit, onOpenChannels: () -> Unit) {
+private fun HedwigScreen(onOpenHelp: () -> Unit, onOpenChannels: () -> Unit, onOpenLogs: () -> Unit) {
     val context = LocalContext.current
     val prefs = remember { SecurePrefs(context) }
     val dao = remember { HedwigDatabase.get(context).forwardLogDao() }
@@ -220,7 +236,8 @@ private fun HedwigScreen(onOpenHelp: () -> Unit, onOpenChannels: () -> Unit) {
     val battery by HedwigState.batteryLevel.collectAsState()
     val successCount by HedwigState.successCount.collectAsState()
 
-    val logs by dao.observeRecent(Constants.MAX_LOGS)
+    // 主屏只显示最近 10 条；完整日志在设置里 / main shows latest 10, full logs in Settings.
+    val logs by dao.observeRecent(10)
         .collectAsState(initial = emptyList())
 
     // 权限请求 / permission launchers
@@ -370,7 +387,7 @@ private fun HedwigScreen(onOpenHelp: () -> Unit, onOpenChannels: () -> Unit) {
                 },
             )
 
-            LogsCard(logs)
+            LogsCard(logs, onViewAll = onOpenLogs)
 
             Text(
                 text = stringResource(R.string.privacy_note),
@@ -471,10 +488,11 @@ private fun ModeCard(mode: String, onMode: (String) -> Unit) {
 
 @Composable
 private fun ModePill(label: String, selected: Boolean, modifier: Modifier, onClick: () -> Unit) {
+    val txt: @Composable () -> Unit = { Text(label, maxLines = 1, softWrap = false) }
     if (selected) {
-        Button(onClick = onClick, modifier = modifier) { Text(label) }
+        Button(onClick = onClick, modifier = modifier, contentPadding = PaddingValues(horizontal = 8.dp)) { txt() }
     } else {
-        OutlinedButton(onClick = onClick, modifier = modifier) { Text(label) }
+        OutlinedButton(onClick = onClick, modifier = modifier, contentPadding = PaddingValues(horizontal = 8.dp)) { txt() }
     }
 }
 
@@ -537,11 +555,13 @@ private fun ConfigCard(
                 singleLine = true, modifier = Modifier.fillMaxWidth(),
             )
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
-                Button(onClick = onSave, modifier = Modifier.weight(1f)) {
-                    Text(stringResource(R.string.btn_save))
+                Button(onClick = onSave, modifier = Modifier.weight(1f),
+                    contentPadding = PaddingValues(horizontal = 8.dp)) {
+                    Text(stringResource(R.string.btn_save), maxLines = 1, softWrap = false)
                 }
-                OutlinedButton(onClick = onShowQr, modifier = Modifier.weight(1f)) {
-                    Text(stringResource(R.string.btn_show_qr))
+                OutlinedButton(onClick = onShowQr, modifier = Modifier.weight(1f),
+                    contentPadding = PaddingValues(horizontal = 8.dp)) {
+                    Text(stringResource(R.string.btn_show_qr), maxLines = 1, softWrap = false)
                 }
             }
         }
@@ -623,7 +643,7 @@ private fun ActionsCard(running: Boolean, isConfigured: Boolean, onSaveBeforeAct
                 },
                 enabled = isConfigured,
                 modifier = Modifier.fillMaxWidth(),
-            ) { Text(stringResource(R.string.btn_simulate_sms)) }
+            ) { Text(stringResource(R.string.btn_simulate_sms), maxLines = 1, softWrap = false) }
         }
     }
 }
@@ -656,23 +676,23 @@ private fun PermissionCard(
             SectionTitle(stringResource(R.string.section_permissions))
             Text(stringResource(R.string.perm_hint), style = MaterialTheme.typography.bodySmall)
             OutlinedButton(onClick = onRequestSms, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.btn_perm_sms))
+                Text(stringResource(R.string.btn_perm_sms), maxLines = 1, softWrap = false)
             }
             OutlinedButton(onClick = onRequestNotif, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.btn_perm_notif))
+                Text(stringResource(R.string.btn_perm_notif), maxLines = 1, softWrap = false)
             }
             OutlinedButton(onClick = onRequestSim, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.btn_perm_sim))
+                Text(stringResource(R.string.btn_perm_sim), maxLines = 1, softWrap = false)
             }
             OutlinedButton(onClick = onRequestBattery, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.btn_perm_battery))
+                Text(stringResource(R.string.btn_perm_battery), maxLines = 1, softWrap = false)
             }
         }
     }
 }
 
 @Composable
-private fun LogsCard(logs: List<ForwardLog>) {
+private fun LogsCard(logs: List<ForwardLog>, onViewAll: () -> Unit) {
     val fmt = remember { SimpleDateFormat("MM-dd HH:mm:ss", Locale.getDefault()) }
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp)) {
@@ -683,13 +703,16 @@ private fun LogsCard(logs: List<ForwardLog>) {
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.outline)
             } else {
-                // 外层已可滚动，这里固定高度避免嵌套滚动冲突 / fixed height to avoid nested scroll.
-                LazyColumn(modifier = Modifier.fillMaxWidth().height(260.dp)) {
-                    items(logs) { log ->
+                // 主屏只列最近 10 条，避免嵌套滚动用 Column / list latest 10 with a plain Column.
+                Column(Modifier.fillMaxWidth()) {
+                    logs.forEach { log ->
                         LogRow(log, fmt.format(Date(log.timestamp)))
                         HorizontalDivider()
                     }
                 }
+            }
+            TextButton(onClick = onViewAll, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.logs_view_all))
             }
         }
     }

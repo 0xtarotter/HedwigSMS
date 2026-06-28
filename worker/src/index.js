@@ -21,6 +21,8 @@ const VALID_TYPES = new Set([
   "power_connected",
   "power_disconnected",
   "heartbeat",
+  "service_on",
+  "service_off",
 ]);
 
 /** 定长安全比较，防时序攻击 / constant-time comparison to avoid timing attacks. */

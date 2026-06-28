@@ -168,7 +168,8 @@ fun ChannelsScreen(onBack: () -> Unit) {
                         qrToShow = full.encode()
                     },
                     modifier = Modifier.weight(1f),
-                ) { Text(stringResource(R.string.ch_export_qr)) }
+                    contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 8.dp),
+                ) { Text(stringResource(R.string.ch_export_qr), maxLines = 1, softWrap = false) }
                 OutlinedButton(
                     onClick = {
                         val options = com.journeyapps.barcodescanner.ScanOptions()
@@ -178,7 +179,8 @@ fun ChannelsScreen(onBack: () -> Unit) {
                         scanLauncher.launch(options)
                     },
                     modifier = Modifier.weight(1f),
-                ) { Text(stringResource(R.string.ch_scan_import)) }
+                    contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 8.dp),
+                ) { Text(stringResource(R.string.ch_scan_import), maxLines = 1, softWrap = false) }
             }
 
             // ---- Telegram ----

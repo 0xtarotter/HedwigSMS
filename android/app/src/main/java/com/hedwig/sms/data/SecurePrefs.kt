@@ -68,6 +68,31 @@ class SecurePrefs(context: Context) {
         get() = prefs.getString(KEY_CHANNELS, "") ?: ""
         set(v) = prefs.edit().putString(KEY_CHANNELS, v).apply()
 
+    /** 启动时自动检查更新 / auto-check updates on launch. */
+    var autoCheckUpdate: Boolean
+        get() = prefs.getBoolean(KEY_AUTO_UPDATE, true)
+        set(v) = prefs.edit().putBoolean(KEY_AUTO_UPDATE, v).apply()
+
+    /** 开机自动启动守护 / auto-start guard on boot. */
+    var bootAutoStart: Boolean
+        get() = prefs.getBoolean(KEY_BOOT_AUTOSTART, true)
+        set(v) = prefs.edit().putBoolean(KEY_BOOT_AUTOSTART, v).apply()
+
+    /** 每日平安报告（心跳）/ daily health report (heartbeat). */
+    var heartbeatEnabled: Boolean
+        get() = prefs.getBoolean(KEY_HB_ENABLED, true)
+        set(v) = prefs.edit().putBoolean(KEY_HB_ENABLED, v).apply()
+
+    /** 界面语言："" 跟随系统 / "zh" / "en" / app UI language. */
+    var language: String
+        get() = prefs.getString(KEY_LANG, "") ?: ""
+        set(v) = prefs.edit().putString(KEY_LANG, v).apply()
+
+    /** 常驻通知栏显示详细动态状态 / show detailed dynamic status in the ongoing notification. */
+    var notifDynamic: Boolean
+        get() = prefs.getBoolean(KEY_NOTIF_DYNAMIC, true)
+        set(v) = prefs.edit().putBoolean(KEY_NOTIF_DYNAMIC, v).apply()
+
     /** 当前模式下是否已配置完整 / whether current mode is fully configured. */
     fun isConfigured(): Boolean =
         if (mode == MODE_DIRECT) {
@@ -93,6 +118,11 @@ class SecurePrefs(context: Context) {
         const val KEY_ONBOARDED = "onboarding_done"
         const val KEY_MODE = "run_mode"
         const val KEY_CHANNELS = "channel_config"
+        const val KEY_AUTO_UPDATE = "auto_update"
+        const val KEY_BOOT_AUTOSTART = "boot_autostart"
+        const val KEY_HB_ENABLED = "heartbeat_enabled"
+        const val KEY_LANG = "ui_language"
+        const val KEY_NOTIF_DYNAMIC = "notif_dynamic"
 
         const val MODE_RELAY = "relay"
         const val MODE_DIRECT = "direct"

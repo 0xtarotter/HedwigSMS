@@ -89,7 +89,7 @@ class SMSAndStatusReceiver : BroadcastReceiver() {
     /** 开机自启：若用户曾开启服务，则恢复运行 / restore service after boot if enabled. */
     private fun handleBoot(context: Context) {
         val prefs = SecurePrefs(context)
-        if (prefs.serviceEnabled && prefs.isConfigured()) {
+        if (prefs.serviceEnabled && prefs.bootAutoStart && prefs.isConfigured()) {
             val start = Intent(context, HedwigForwardService::class.java).apply {
                 action = Constants.ACTION_START
             }

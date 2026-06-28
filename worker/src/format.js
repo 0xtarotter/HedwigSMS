@@ -116,6 +116,26 @@ export function formatMessage(payload) {
       return { title, text };
     }
 
+    case "service_on": {
+      const level = data.battery_level ?? "?";
+      const title = `✅ 守护已开启 Guard Started`;
+      const text =
+        `✅ 守护已开启 | Guard Started\n———————————————\n` +
+        `📱 设备 Device：${device}\n🔋 当前电量 Level：${level}%\n🕒 时间 Time：${time}\n———————————————\n` +
+        `🛡️ Hedwig 开始守护，短信将实时转发。`;
+      return { title, text };
+    }
+
+    case "service_off": {
+      const level = data.battery_level ?? "?";
+      const title = `🛑 守护已停止 Guard Stopped`;
+      const text =
+        `🛑 守护已停止 | Guard Stopped\n———————————————\n` +
+        `📱 设备 Device：${device}\n🔋 当前电量 Level：${level}%\n🕒 时间 Time：${time}\n———————————————\n` +
+        `⚠️ 短信将不再转发，请留意！`;
+      return { title, text };
+    }
+
     default: {
       // 未知类型也兜底转发，方便调试 / Fallback for unknown types (debug-friendly).
       const title = `📨 Hedwig 通知 Notification`;

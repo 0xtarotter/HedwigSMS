@@ -76,6 +76,24 @@ object MessageFormatter {
                         "🛡️ Hedwig 正在守护中 / Hedwig is on guard.",
                 )
             }
+            HedwigPayload.TYPE_SERVICE_ON -> {
+                val lv = d.batteryLevel ?: -1
+                Formatted(
+                    "✅ 守护已开启 Guard Started",
+                    "✅ 守护已开启 | Guard Started\n$SEP\n" +
+                        "📱 设备 Device：$device\n🔋 当前电量 Level：${lvStr(lv)}\n🕒 时间 Time：$t\n$SEP\n" +
+                        "🛡️ Hedwig 开始守护，短信将实时转发。",
+                )
+            }
+            HedwigPayload.TYPE_SERVICE_OFF -> {
+                val lv = d.batteryLevel ?: -1
+                Formatted(
+                    "🛑 守护已停止 Guard Stopped",
+                    "🛑 守护已停止 | Guard Stopped\n$SEP\n" +
+                        "📱 设备 Device：$device\n🔋 当前电量 Level：${lvStr(lv)}\n🕒 时间 Time：$t\n$SEP\n" +
+                        "⚠️ 短信将不再转发，请留意！",
+                )
+            }
             else -> Formatted(
                 "📨 Hedwig 通知 Notification",
                 "📨 Hedwig 通知 | Notification\n📱 设备 Device：$device\n🏷️ 类型 Type：${payload.type}\n🕒 时间 Time：$t",

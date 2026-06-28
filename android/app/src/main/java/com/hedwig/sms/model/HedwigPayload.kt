@@ -36,6 +36,8 @@ data class HedwigPayload(
         const val TYPE_POWER_CONNECTED = "power_connected"
         const val TYPE_POWER_DISCONNECTED = "power_disconnected"
         const val TYPE_HEARTBEAT = "heartbeat"
+        const val TYPE_SERVICE_ON = "service_on"
+        const val TYPE_SERVICE_OFF = "service_off"
     }
 }
 

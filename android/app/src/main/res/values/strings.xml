@@ -8,6 +8,7 @@
     <string name="notif_guarding">🟢 Hedwig 正在守护中 | 🔋电量: %1$d%% | 📈已成功转发: %2$d 条</string>
     <string name="notif_forwarding">🔄 正在转发来自 [%1$s] 的信息…</string>
     <string name="notif_failed">⚠️ 最近一次转发失败，请检查网络</string>
+    <string name="notif_minimal">🟢 Hedwig 正在守护中</string>
 
     <!-- 状态卡片 / status card -->
     <string name="status_guarding">正在守护中</string>
@@ -24,7 +25,7 @@
     <string name="field_device_name">设备名称 (Device Name)</string>
     <string name="btn_save">保存配置</string>
     <string name="btn_scan_import">📷 扫码导入配置</string>
-    <string name="btn_show_qr">🔳 我的配置二维码</string>
+    <string name="btn_show_qr">🔳 配置二维码</string>
     <string name="qr_dialog_title">配置二维码</string>
     <string name="qr_dialog_hint">用另一台手机的 HedwigSMS 扫描此码即可同步配置。\n⚠️ 含敏感令牌，请勿外传或截图分享。</string>
     <string name="qr_close">关闭</string>
@@ -54,8 +55,8 @@
     <string name="ch_title">IM 渠道配置</string>
     <string name="ch_intro">手机直连模式：填好任意渠道 → 点「测试发送」当场验证 → 点「保存」。无需服务器。\n⚠️ Telegram/Discord/Slack 在国内需手机能连上其服务器（如已挂代理）。</string>
     <string name="ch_save">💾 保存全部</string>
-    <string name="ch_export_qr">🔳 导出配置二维码</string>
-    <string name="ch_scan_import">📷 扫码导入配置</string>
+    <string name="ch_export_qr">🔳 导出二维码</string>
+    <string name="ch_scan_import">📷 扫码导入</string>
     <string name="ch_qr_title">配置二维码（含全部渠道）</string>
     <string name="ch_qr_hint">用另一台手机的 HedwigSMS 点「📷 扫码导入配置」扫描，即可整套同步。\n⚠️ 含全部密钥，请勿外传或截图分享。</string>
     <string name="ch_qr_close">关闭</string>
@@ -84,7 +85,7 @@
     <string name="btn_start">启动守护</string>
     <string name="btn_stop">停止</string>
     <string name="btn_test">📨 发送测试消息</string>
-    <string name="btn_simulate_sms">🧪 模拟收到短信（测试转发）</string>
+    <string name="btn_simulate_sms">🧪 模拟收到短信</string>
     <string name="sim_sms_sender">10086（模拟 / Simulated）</string>
     <string name="sim_sms_sim">卡2 · 中国移动 · 138****8888（模拟）</string>
     <string name="sim_sms_body">【HedwigSMS】您的验证码为 886623，5 分钟内有效，请勿泄露。本条由「模拟收到短信」功能发出，用于测试转发链路。</string>
@@ -95,10 +96,10 @@
     <!-- 权限 / permissions -->
     <string name="section_permissions">③ 权限与保活</string>
     <string name="perm_hint">为保证短信实时转发，请逐项授予权限，并关闭本应用的电池优化。</string>
-    <string name="btn_perm_sms">授予「接收短信」权限</string>
-    <string name="btn_perm_notif">授予「通知」权限</string>
-    <string name="btn_perm_battery">关闭电池优化（强烈建议）</string>
-    <string name="btn_perm_sim">授予「读取 SIM 卡信息」（多卡识别接收号码）</string>
+    <string name="btn_perm_sms">授予接收短信权限</string>
+    <string name="btn_perm_notif">授予通知权限</string>
+    <string name="btn_perm_battery">关闭电池优化（建议）</string>
+    <string name="btn_perm_sim">授予 SIM 卡信息（多卡识别）</string>
 
     <!-- 日志 / logs -->
     <string name="section_logs">④ 转发日志（最近 50 条）</string>
@@ -124,6 +125,27 @@
     <!-- ============ 顶栏菜单 / top bar ============ -->
     <string name="menu_help">帮助</string>
     <string name="action_back">返回</string>
+    <string name="menu_settings">设置</string>
+    <string name="settings_title">设置</string>
+    <string name="set_auto_update">启动时自动检查更新</string>
+    <string name="set_boot_autostart">开机自动启动守护</string>
+    <string name="set_heartbeat">每日平安报告</string>
+    <string name="set_notification">常驻状态通知（通知栏详情）</string>
+    <string name="set_daily_time">每日报告时间</string>
+    <string name="set_language">界面语言</string>
+    <string name="lang_system">跟随系统</string>
+    <string name="lang_zh">简体中文</string>
+    <string name="lang_en">English</string>
+    <string name="settings_section_general">通用</string>
+    <string name="settings_section_data">数据</string>
+    <string name="settings_view_logs">查看完整日志</string>
+
+    <!-- 日志页 / logs screen -->
+    <string name="logs_title">转发日志</string>
+    <string name="logs_search_hint">搜索发件人 / 内容 / 类型</string>
+    <string name="logs_filter_all">全部</string>
+    <string name="logs_view_all">查看完整日志 →</string>
+    <string name="logs_empty_filtered">没有匹配的记录</string>
 
     <!-- ============ 新手引导 / onboarding ============ -->
     <string name="ob_skip">跳过</string>

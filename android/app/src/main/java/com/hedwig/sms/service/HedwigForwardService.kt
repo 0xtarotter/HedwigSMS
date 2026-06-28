@@ -64,12 +64,19 @@ class HedwigForwardService : Service() {
 
         when (intent?.action) {
             Constants.ACTION_STOP -> {
+                // 先告知「守护已停止」（独立作用域，不受停止影响）再停 / notify off, then stop.
+                ServiceStatusNotifier.send(this, on = false)
                 stopEverything()
                 return START_NOT_STICKY
             }
             Constants.ACTION_TEST -> handleTest()
             Constants.ACTION_EVENT -> handleEvent(intent)
-            else -> startGuarding() // ACTION_START 或服务被系统重启 / start or system restart
+            Constants.ACTION_START -> {
+                val wasRunning = HedwigState.running.value
+                startGuarding()
+                if (!wasRunning) ServiceStatusNotifier.send(this, on = true) // 仅在真正开启时告知
+            }
+            else -> startGuarding() // 服务被系统重启，不重复告知 / system restart, no notify
         }
         return START_STICKY
     }
@@ -193,14 +200,14 @@ class HedwigForwardService : Service() {
                 val detail = directSummary(payload, okCount, results.size,
                     results.firstOrNull { !it.ok }?.error)
                 val code = results.firstOrNull { !it.ok }?.code ?: 0
-                logResult(payload.type, ok, code, detail)
+                logResult(payload.type, ok, code, detail, payload.data.sim)
                 updatePhase(if (ok) HedwigState.Phase.GUARDING else HedwigState.Phase.FAILED)
                 releaseWakeLock(wl)
             }
         } else {
             // 中转模式：POST 到用户的 Worker/relay / relay mode.
             HedwigApiClient.send(prefs.buildRequestUrl(), payload) { result ->
-                logResult(payload.type, result.success, result.statusCode, summaryFor(payload, result.message))
+                logResult(payload.type, result.success, result.statusCode, summaryFor(payload, result.message), payload.data.sim)
                 updatePhase(if (result.success) HedwigState.Phase.GUARDING else HedwigState.Phase.FAILED)
                 releaseWakeLock(wl)
             }
@@ -227,7 +234,7 @@ class HedwigForwardService : Service() {
     }
 
     /** 写日志、裁剪到 50 条、刷新成功计数 / persist log, trim to 50, refresh count. */
-    private fun logResult(type: String, success: Boolean, code: Int, detail: String) {
+    private fun logResult(type: String, success: Boolean, code: Int, detail: String, sim: String? = null) {
         scope.launch {
             dao.insert(
                 ForwardLog(
@@ -236,6 +243,7 @@ class HedwigForwardService : Service() {
                     success = success,
                     statusCode = code,
                     detail = detail,
+                    sim = sim,
                 ),
             )
             dao.trim(Constants.MAX_LOGS)
@@ -271,7 +279,11 @@ class HedwigForwardService : Service() {
     private fun buildNotification(phase: HedwigState.Phase): Notification {
         val battery = HedwigState.batteryLevel.value
         val count = HedwigState.successCount.value
-        val text = when (phase) {
+        // 关闭「常驻状态通知」详情时只显示精简文案（前台服务仍需一条通知）。
+        // When the dynamic status toggle is off, show minimal text (FGS still needs a notification).
+        val text = if (!prefs.notifDynamic) {
+            getString(R.string.notif_minimal)
+        } else when (phase) {
             HedwigState.Phase.GUARDING ->
                 getString(R.string.notif_guarding, battery, count)
             HedwigState.Phase.FORWARDING ->
