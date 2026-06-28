@@ -7,7 +7,7 @@ object Constants {
     // GitHub 仓库（用于检查更新）/ GitHub repo for update checks.
     // ⚠️ 仓库设为 public 后，把下面改成你的「用户名/仓库名」。
     // After making the repo public, change this to "your-username/HedwigSMS".
-    const val GITHUB_REPO = "REPLACE_ME/HedwigSMS"
+    const val GITHUB_REPO = "hcao10/HedwigSMS"
 
     // 自定义心跳广播 action / custom heartbeat broadcast action
     const val ACTION_HEARTBEAT = "com.hedwig.sms.action.HEARTBEAT"
