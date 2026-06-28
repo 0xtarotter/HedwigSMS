@@ -1,0 +1,30 @@
+# HedwigSMS Cloudflare Worker 配置 / configuration
+# ------------------------------------------------------------------
+# 使用方法 / Usage:
+#   1. 安装 wrangler:   npm i -g wrangler   （或用 npx wrangler）
+#   2. 登录:            wrangler login
+#   3. 设置机密变量:     见下方「机密配置」/ see "secrets" below
+#   4. 部署:            wrangler deploy
+# ------------------------------------------------------------------
+
+name = "hedwigsms"
+main = "src/index.js"
+compatibility_date = "2024-09-23"
+
+# ───────────────── 机密配置 / Secrets ─────────────────
+# 切勿把 token 明文写进本文件并提交到 Git！请用 wrangler secret 命令设置：
+# NEVER hardcode secrets here and commit them. Use `wrangler secret put`:
+#
+#   wrangler secret put AUTH_TOKEN
+#   wrangler secret put TELEGRAM_BOT_TOKEN
+#   wrangler secret put TELEGRAM_CHAT_ID
+#   wrangler secret put FEISHU_WEBHOOK_URL
+#   wrangler secret put FEISHU_SIGN_SECRET      # 可选 / optional
+#   wrangler secret put DISCORD_WEBHOOK_URL     # 可选
+#   wrangler secret put SLACK_WEBHOOK_URL       # 可选
+#   wrangler secret put CUSTOM_WEBHOOK_URL      # 可选
+#   wrangler secret put RESEND_API_KEY          # 可选（邮件）
+#   wrangler secret put EMAIL_FROM              # 可选（邮件）
+#   wrangler secret put EMAIL_TO                # 可选（邮件）
+#
+# 本地开发 / local dev: 复制 .dev.vars.example 为 .dev.vars 后填值，再 `wrangler dev`。

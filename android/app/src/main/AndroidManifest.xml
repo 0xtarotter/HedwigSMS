@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- ============ 权限 / Permissions ============ -->
+    <!-- 接收短信 / receive SMS -->
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <!-- 多卡识别：读取接收短信的 SIM 卡槽/号码/运营商 / multi-SIM: which SIM received the SMS -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
+    <!-- 网络访问 / internet -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- 扫码导入配置 / scan config QR -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <!-- 唤醒锁，确保转发期间不休眠 / wake lock to finish forwarding -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- 前台服务 / foreground service (Android 9+ / 14+) -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <!-- 通知权限 / notifications (Android 13+) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- 开机自启 / start on boot -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- 精确闹钟做每日心跳 / exact alarm for daily heartbeat -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <!-- 引导用户关闭电池优化 / request ignore battery optimizations -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
+    <application
+        android:name=".HedwigApp"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.HedwigSMS"
+        tools:targetApi="34">
+
+        <!-- 主界面 / main activity -->
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.HedwigSMS">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- 自定义扫码界面：锁定竖屏，避免随手机方向旋转 / custom scanner, locked to portrait -->
+        <activity
+            android:name=".ui.ScannerActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:stateNotNeeded="true"
+            android:theme="@style/Theme.HedwigSMS.Scanner" />
+
+        <!-- 前台保活服务 / foreground keep-alive service -->
+        <service
+            android:name=".service.HedwigForwardService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+        <!-- 下拉快捷开关磁贴 / Quick Settings tile -->
+        <service
+            android:name=".tile.HedwigTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_hedwig"
+            android:label="@string/tile_label"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <!-- 桌面小插件 / home-screen app widget -->
+        <receiver
+            android:name=".widget.HedwigWidgetProvider"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.hedwig.sms.WIDGET_STOP" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_hedwig_info" />
+        </receiver>
+
+        <!-- 统一广播接收器：短信 / 开机 / 每日心跳。 -->
+        <!-- Unified receiver: SMS / boot / daily heartbeat. -->
+        <!-- 说明：SMS_RECEIVED 与 BOOT_COMPLETED 都是「受保护广播」(protected broadcast)，
+             仅系统可发送，因此无需 android:permission 即可安全静态注册。
+             心跳为本应用通过 AlarmManager 触发的自定义 action。-->
+        <!-- Note: SMS_RECEIVED & BOOT_COMPLETED are protected broadcasts (only the OS can send
+             them), so no android:permission is needed. The heartbeat is our own AlarmManager action.
+             We intentionally do NOT set android:permission="BROADCAST_SMS" here, because that
+             would block our own AlarmManager-triggered heartbeat broadcast. -->
+        <!-- 电量/电源变化 (BATTERY_LOW / POWER_CONNECTED / POWER_DISCONNECTED) 在 Android 8+
+             无法静态注册，已由前台服务在运行时用同一个 Receiver 动态注册（见 HedwigForwardService）。 -->
+        <!-- Battery/power changes can't be manifest-registered on Android 8+, so the foreground
+             service registers the same receiver at runtime for those. -->
+        <receiver
+            android:name=".receiver.SMSAndStatusReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter android:priority="2147483647">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="com.hedwig.sms.action.HEARTBEAT" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+</manifest>

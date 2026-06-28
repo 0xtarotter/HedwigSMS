@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HedwigSMS</string>
+
+    <string name="notif_channel_name">Hedwig Guard Service</string>
+    <string name="notif_channel_desc">Ongoing notification showing forwarder status</string>
+    <string name="notif_guarding">🟢 Hedwig on guard | 🔋 Battery: %1$d%% | 📈 Forwarded: %2$d</string>
+    <string name="notif_forwarding">🔄 Forwarding message from [%1$s]…</string>
+    <string name="notif_failed">⚠️ Last forward failed, please check the network</string>
+
+    <string name="status_guarding">On guard</string>
+    <string name="status_forwarding">Forwarding…</string>
+    <string name="status_failed">Last forward failed</string>
+    <string name="status_stopped">Service stopped</string>
+    <string name="stat_battery">Battery</string>
+    <string name="stat_forwarded">Forwarded</string>
+
+    <string name="section_config">① Cloud configuration</string>
+    <string name="field_worker_url">Worker URL</string>
+    <string name="field_token">Auth Token</string>
+    <string name="field_device_name">Device Name</string>
+    <string name="btn_save">Save</string>
+    <string name="btn_scan_import">📷 Scan to import config</string>
+    <string name="btn_show_qr">🔳 My config QR</string>
+    <string name="qr_dialog_title">Config QR</string>
+    <string name="qr_dialog_hint">Scan this with HedwigSMS on another phone to sync the config.\n⚠️ Contains a sensitive token — do not share or screenshot.</string>
+    <string name="qr_close">Close</string>
+    <string name="scan_success">Relay config imported ✅</string>
+    <string name="scan_success_full">Full config imported ✅</string>
+    <string name="menu_scan">Scan</string>
+    <string name="scan_title">Scan QR</string>
+    <string name="scan_hint2">Place the QR code inside the frame to scan</string>
+    <string name="scan_torch_on">🔦 Turn on flash</string>
+    <string name="scan_torch_off">🔦 Turn off flash</string>
+    <string name="scan_failed">Invalid or unrecognized QR ❌</string>
+    <string name="scan_cancelled">Scan cancelled</string>
+    <string name="qr_need_config">Please fill in the Worker URL and Token first</string>
+    <string name="scan_prompt">Point the camera at the config QR</string>
+
+    <string name="section_mode">Run mode</string>
+    <string name="mode_relay">Relay</string>
+    <string name="mode_direct">Direct</string>
+    <string name="mode_relay_hint">Dispatch via your Cloudflare Worker / relay. Required for China-blocked platforms like Telegram &amp; Discord.</string>
+    <string name="mode_direct_hint">Phone sends straight to each IM, no server. Best for China-reachable platforms (Feishu, Email, Bark, WeCom).</string>
+
+    <string name="section_channels">IM channels</string>
+    <string name="direct_channels_count">%1$d channel(s) configured</string>
+    <string name="btn_configure_channels">⚙️ Configure IM channels</string>
+    <string name="ch_title">IM channel config</string>
+    <string name="ch_intro">Direct mode: fill any channel → tap “Test” to verify → “Save”. No server needed.\n⚠️ Telegram/Discord/Slack need the phone to reach their servers (e.g. via a proxy) in China.</string>
+    <string name="ch_save">💾 Save all</string>
+    <string name="ch_export_qr">🔳 Export config QR</string>
+    <string name="ch_scan_import">📷 Scan to import config</string>
+    <string name="ch_qr_title">Config QR (all channels)</string>
+    <string name="ch_qr_hint">Scan with “Scan to import config” in HedwigSMS on another phone to sync everything.\n⚠️ Contains all secrets — do not share or screenshot.</string>
+    <string name="ch_qr_close">Close</string>
+    <string name="ch_scan_ok">Full config imported ✅</string>
+    <string name="ch_scan_fail">Invalid or not a config QR ❌</string>
+    <string name="ch_scan_cancelled">Scan cancelled</string>
+    <string name="ch_test">📨 Test send</string>
+    <string name="ch_saved">Saved ✅</string>
+    <string name="ch_sending">Sending…</string>
+    <string name="ch_querying">Querying…</string>
+    <string name="ch_test_ok">✅ Test message sent — check the app</string>
+    <string name="ch_test_fail">❌ %1$s</string>
+    <string name="ch_need_token">Enter the Bot Token first</string>
+    <string name="ch_tg_discover">🔎 Auto-get chat_id</string>
+    <string name="ch_tg_none">No chats found. Send a message to @%1$s first, then retry.</string>
+    <string name="ch_tg_found">@%1$s · found %2$d chat(s), tap one below 👇</string>
+    <string name="ch_feishu_secret">Sign Secret (optional)</string>
+    <string name="ch_custom_name">Generic Webhook</string>
+    <string name="ch_custom_hint">Works with Bark / ServerChan / WeCom / DingTalk / n8n</string>
+    <string name="ch_email_from">From (verified domain address)</string>
+    <string name="ch_email_to">To (comma-separated)</string>
+    <string name="type_feishu_name">Feishu</string>
+
+    <string name="section_control">② Service control</string>
+    <string name="btn_start">Start guard</string>
+    <string name="btn_stop">Stop</string>
+    <string name="btn_test">📨 Send test message</string>
+    <string name="btn_simulate_sms">🧪 Simulate incoming SMS (test forwarding)</string>
+    <string name="sim_sms_sender">10086 (Simulated)</string>
+    <string name="sim_sms_sim">SIM2 · Carrier · 138****8888 (sim.)</string>
+    <string name="sim_sms_body">[HedwigSMS] Your verification code is 886623, valid for 5 minutes. Sent by the “Simulate SMS” feature to test the forwarding chain.</string>
+    <string name="sim_sms_toast">Simulated an SMS, running the forward flow…</string>
+    <string name="test_label">Test</string>
+    <string name="status_label">Status</string>
+
+    <string name="section_permissions">③ Permissions &amp; keep-alive</string>
+    <string name="perm_hint">For real-time SMS forwarding, grant each permission and disable battery optimization for this app.</string>
+    <string name="btn_perm_sms">Grant \"Receive SMS\"</string>
+    <string name="btn_perm_notif">Grant \"Notifications\"</string>
+    <string name="btn_perm_battery">Disable battery optimization (strongly recommended)</string>
+    <string name="btn_perm_sim">Grant \"Read SIM info\" (multi-SIM receiving number)</string>
+
+    <string name="section_logs">④ Forwarding logs (latest 50)</string>
+    <string name="logs_empty">No records yet. After configuring, tap \"Send test message\".</string>
+
+    <string name="type_sms">SMS</string>
+    <string name="type_battery_low">Low battery</string>
+    <string name="type_power_connected">Power connected</string>
+    <string name="type_power_disconnected">Power lost</string>
+    <string name="type_heartbeat">Heartbeat</string>
+
+    <string name="err_not_configured">Worker URL or Token not configured</string>
+    <string name="privacy_note">🔒 Privacy: fully local, zero data collection, no ads, fully open-source. SMS is sent only to your own Worker.</string>
+
+    <!-- QS tile & widget -->
+    <string name="tile_label">Hedwig Guard</string>
+    <string name="widget_start">▶ Start guard</string>
+    <string name="widget_stop">⏸ Stop guard</string>
+    <string name="widget_desc">Shows guard status &amp; battery, quickly start/stop the forwarder</string>
+
+    <!-- ============ top bar ============ -->
+    <string name="menu_help">Help</string>
+    <string name="action_back">Back</string>
+
+    <!-- ============ onboarding ============ -->
+    <string name="ob_skip">Skip</string>
+    <string name="ob_next">Next</string>
+    <string name="ob_prev">Back</string>
+    <string name="ob_done">Get started 🚀</string>
+
+    <string name="ob_p1_title">Welcome to HedwigSMS</string>
+    <string name="ob_p1_body">Forward SMS codes, low-battery and power-outage alerts from a backup phone to your IM abroad (Telegram / Feishu / Discord / Slack / Email).\n\n🔒 Fully local\n🚫 Zero data collection · no ads\n📖 Fully open-source (MIT)</string>
+
+    <string name="ob_p2_title">How it works</string>
+    <string name="ob_p2_body">📱 The app on your backup phone listens for events\n　　↓ encrypted upload\n☁️ Your own Cloudflare Worker formats &amp; dispatches\n　　↓\n💬 Telegram / Feishu / Discord / Slack / Email\n\nIt forwards 5 event types:\n📩 SMS　🪫 Low battery　⚡️ Power lost\n🔌 Power on　💚 Daily health report</string>
+
+    <string name="ob_p3_title">Step 1 · Deploy the Worker</string>
+    <string name="ob_p3_body">① Cloudflare → Workers &amp; Pages → Create Worker\n② Paste the whole worker/index.single.js into the editor and Deploy\n③ In Settings → Variables add:\n　• AUTH_TOKEN (a long secret you choose)\n　• at least one channel, e.g. TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID\n④ Copy the Worker URL (like https://xxx.workers.dev)\n\n💡 New to this? Tap Help (top-right) for full step-by-step instructions and all env vars.</string>
+
+    <string name="ob_p4_title">Step 2 · Configure the app</string>
+    <string name="ob_p4_body">Back in this app, under \"① Cloud configuration\":\n\n⚡️ Fastest: generate a QR with tools/setup-qr.html on your computer, then tap \"📷 Scan to import config\" — done!\n\nOr manually:\n① Enter the Worker URL and Token (Token must equal AUTH_TOKEN)\n② Set a device name (e.g. \"Home backup phone\")\n③ Tap Save, then \"📨 Send test message\"\n\n✅ If your IM receives the health report instantly, you are all set!\n❌ Not received? 401=token mismatch; 400=bad URL; 500=no channel configured.</string>
+
+    <string name="ob_p5_title">Step 3 · Permissions &amp; keep-alive</string>
+    <string name="ob_p5_body">For 24/7 reliability, under \"③ Permissions\":\n① Grant \"Receive SMS\"\n② Grant \"Notifications\" (Android 13+)\n③ Tap \"Disable battery optimization\" and choose Allow\n\n⚠️ Important on OEM ROMs: go to System Settings → Apps → this app and enable \"Auto-start / unrestricted background\" (Xiaomi, Huawei, OPPO, vivo, Samsung, etc.).</string>
+
+    <string name="ob_p6_title">All set! 🦉</string>
+    <string name="ob_p6_body">Under \"② Service control\" tap \"Start guard\".\nWhen the status bar shows 🟢 \"Hedwig on guard\", it is running:\n\n• While forwarding it briefly shows 🔄 \"Forwarding…\"\n• On failure it shows a ⚠️ warning\n• A 💚 daily health report is sent automatically\n\nYou can revisit details anytime via Help (top-right). May Hedwig deliver on time!</string>
+
+    <!-- ============ help ============ -->
+    <string name="help_intro">HedwigSMS is an open-source SMS forwarder: the app on your backup phone listens for SMS/battery/power events and uploads them to your own Cloudflare Worker, which dispatches them to your IM. Full guide below.</string>
+
+    <string name="help_s1_title">🚀 Quick start (5 min)</string>
+    <string name="help_s1_body">1) Cloud: create a Worker on Cloudflare, paste worker/index.single.js and Deploy.\n2) In Settings → Variables set AUTH_TOKEN and at least one channel.\n3) Copy the Worker URL.\n4) In this app enter URL + Token + device name → Save → Send test message.\n5) Grant permissions + disable battery optimization → Start guard.</string>
+
+    <string name="help_s2_title">🔑 Environment variables (set in the Worker)</string>
+    <string name="help_s2_body">• AUTH_TOKEN (required): access secret, must match the Token in the app.\n• TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID: Telegram bot.\n• FEISHU_WEBHOOK_URL (+ optional FEISHU_SIGN_SECRET): Feishu custom bot.\n• DISCORD_WEBHOOK_URL: Discord channel webhook.\n• SLACK_WEBHOOK_URL: Slack Incoming Webhook.\n• CUSTOM_WEBHOOK_URL: generic — Bark / ServerChan / WeCom / DingTalk / n8n.\n• RESEND_API_KEY + EMAIL_FROM + EMAIL_TO: email (via Resend).\n\nConfigure at least one channel.</string>
+
+    <string name="help_s3_title">❓ FAQ</string>
+    <string name="help_s3_body">• Nothing forwarded? Grant \"Receive SMS\", disable battery optimization, tap \"Start guard\", and verify the cloud link with \"Send test message\".\n• Stops after screen off? OEM ROMs need \"Auto-start / unrestricted background\" allowed separately.\n• Test errors? 401=token ≠ AUTH_TOKEN; 400=bad URL; 500=no channel configured in the Worker.\n• When is the daily report? 09:00 by default, triggered by an alarm.</string>
+
+    <string name="help_s4_title">🔒 Privacy &amp; security</string>
+    <string name="help_s4_body">• Zero collection: no analytics, no ads, nothing sent to the author.\n• Fully local: SMS goes only to your own Worker; the Worker code is open and auditable.\n• Encrypted storage: URL &amp; Token stored on-device via EncryptedSharedPreferences (AES-256).</string>
+
+    <string name="help_s5_title">ℹ️ About</string>
+    <string name="help_s5_body">HedwigSMS · open-source (MIT)\nAuthor: Haowei Cao · https://chwjh.com\nMulti-channel dispatch design adapted from OpenClaw (MIT).</string>
+
+    <string name="help_replay">Replay the onboarding</string>
+    <string name="help_check_update">Check for updates</string>
+    <string name="help_version">Current version v%1$s</string>
+
+    <!-- update -->
+    <string name="update_title">New version %1$s available</string>
+    <string name="update_download">Download</string>
+    <string name="update_later">Later</string>
+    <string name="update_checking">Checking for updates…</string>
+    <string name="update_latest">You\'re on the latest version ✅</string>
+    <string name="update_failed">Update check failed: %1$s</string>
+    <string name="update_not_configured">Update source not set (developer must set the GitHub repo)</string>
+</resources>

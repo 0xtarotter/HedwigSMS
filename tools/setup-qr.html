@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HedwigSMS · 配置二维码生成器 / Config QR Generator</title>
+<!--
+  离线配置二维码生成器 / Offline config QR generator.
+  在电脑浏览器打开本文件，填入 Worker 地址与 Token，生成二维码，
+  用手机上的 HedwigSMS「📷 扫码导入配置」扫描即可一键配好。
+  Open this file in a desktop browser, fill in the Worker URL & Token, then scan the
+  generated QR with HedwigSMS ("Scan to import config") on your phone.
+
+  🔒 完全离线：你的 Token 不会离开本页面，不会上传到任何服务器。
+  Fully offline: your token never leaves this page.
+
+  QR 生成使用 qrcode.js (davidshimjs, MIT)。/ QR via qrcode.js (MIT).
+-->
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; font-family: -apple-system, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+         background: #0A0D12; color: #E7ECF2; display: flex; justify-content: center; }
+  .wrap { width: 100%; max-width: 560px; padding: 28px 20px 60px; }
+  h1 { font-size: 22px; margin: 8px 0 4px; }
+  .sub { color: #9AA6B2; font-size: 14px; margin-bottom: 22px; line-height: 1.6; }
+  label { display: block; font-size: 13px; color: #9AA6B2; margin: 16px 0 6px; }
+  input { width: 100%; box-sizing: border-box; padding: 12px 14px; border-radius: 12px;
+          border: 1px solid #243042; background: #121823; color: #E7ECF2; font-size: 15px; }
+  input:focus { outline: none; border-color: #34D399; }
+  .qrbox { margin: 26px auto 0; width: 264px; padding: 12px; background: #fff; border-radius: 16px;
+           display: none; }
+  .qrbox.show { display: block; }
+  #qr { display: flex; justify-content: center; }
+  .hint { text-align: center; color: #9AA6B2; font-size: 13px; margin-top: 14px; line-height: 1.6; }
+  .warn { background: #2a1d10; border: 1px solid #5a3a13; color: #f0c98a; padding: 12px 14px;
+          border-radius: 12px; font-size: 13px; margin-top: 22px; line-height: 1.6; }
+  .brand { color: #34D399; font-weight: 700; }
+  code { background: #121823; padding: 1px 6px; border-radius: 6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🦉 HedwigSMS · 配置二维码 <span class="brand">Config QR</span></h1>
+  <p class="sub">
+    填好下面三项 → 自动生成二维码 → 用手机 HedwigSMS 的「📷 扫码导入配置」扫描，一键完成手机端配置。<br />
+    Fill in the fields → a QR appears → scan it with “Scan to import config” in the app.
+  </p>
+
+  <label>Worker 地址 / Worker URL</label>
+  <input id="url" type="text" placeholder="https://hedwigsms.xxx.workers.dev" autocomplete="off" />
+
+  <label>访问令牌 / Token（= AUTH_TOKEN）</label>
+  <input id="token" type="text" placeholder="与 Worker 的 AUTH_TOKEN 完全一致" autocomplete="off" />
+
+  <label>设备名称 / Device name（可选 / optional）</label>
+  <input id="device" type="text" placeholder="国内备用机 / Backup Phone" autocomplete="off" />
+
+  <div class="qrbox" id="qrbox"><div id="qr"></div></div>
+  <p class="hint" id="hint"></p>
+
+  <div class="warn">
+    🔒 本页面完全离线运行，Token 不会上传到任何服务器。生成的二维码含敏感令牌，请勿截图外传。<br />
+    This page runs fully offline; your token is never uploaded. The QR contains a sensitive token — don’t share it.
+  </div>
+</div>
+
+<script src="qrcode.min.js"></script>
+<script>
+  var qr = null;
+  function enc(s){ return encodeURIComponent((s||"").trim()); }
+  function render() {
+    var url = document.getElementById('url').value.trim();
+    var token = document.getElementById('token').value.trim();
+    var device = document.getElementById('device').value.trim();
+    var box = document.getElementById('qrbox');
+    var hint = document.getElementById('hint');
+    if (!url || !token) {
+      box.classList.remove('show');
+      hint.textContent = '请填写 Worker 地址与 Token / Enter URL and Token';
+      return;
+    }
+    var payload = 'hedwig://config?u=' + enc(url) + '&t=' + enc(token) + '&d=' + enc(device);
+    document.getElementById('qr').innerHTML = '';
+    qr = new QRCode(document.getElementById('qr'), {
+      text: payload, width: 240, height: 240,
+      correctLevel: QRCode.CorrectLevel.M
+    });
+    box.classList.add('show');
+    hint.textContent = '✅ 扫描上方二维码即可自动配置 / Scan to auto-configure';
+  }
+  ['url','token','device'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', render);
+  });
+  render();
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "name": "hedwigsms-relay",
+  "version": "1.0.0",
+  "description": "HedwigSMS local relay — runs the same dispatch logic as the Worker, with a Cloudflare quick tunnel for an instant public URL (no Cloudflare account).",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "start": "node start.mjs"
+  }
+}

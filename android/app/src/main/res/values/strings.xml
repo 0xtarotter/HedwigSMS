@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">海德薇短信转发</string>
+
+    <!-- 通知 / notifications -->
+    <string name="notif_channel_name">Hedwig 守护服务</string>
+    <string name="notif_channel_desc">常驻通知，显示转发器运行状态</string>
+    <string name="notif_guarding">🟢 Hedwig 正在守护中 | 🔋电量: %1$d%% | 📈已成功转发: %2$d 条</string>
+    <string name="notif_forwarding">🔄 正在转发来自 [%1$s] 的信息…</string>
+    <string name="notif_failed">⚠️ 最近一次转发失败，请检查网络</string>
+
+    <!-- 状态卡片 / status card -->
+    <string name="status_guarding">正在守护中</string>
+    <string name="status_forwarding">正在转发…</string>
+    <string name="status_failed">最近一次转发失败</string>
+    <string name="status_stopped">服务未运行</string>
+    <string name="stat_battery">当前电量</string>
+    <string name="stat_forwarded">累计转发</string>
+
+    <!-- 配置 / config -->
+    <string name="section_config">① 云端配置</string>
+    <string name="field_worker_url">Worker 地址 (Worker URL)</string>
+    <string name="field_token">访问令牌 (Token)</string>
+    <string name="field_device_name">设备名称 (Device Name)</string>
+    <string name="btn_save">保存配置</string>
+    <string name="btn_scan_import">📷 扫码导入配置</string>
+    <string name="btn_show_qr">🔳 我的配置二维码</string>
+    <string name="qr_dialog_title">配置二维码</string>
+    <string name="qr_dialog_hint">用另一台手机的 HedwigSMS 扫描此码即可同步配置。\n⚠️ 含敏感令牌，请勿外传或截图分享。</string>
+    <string name="qr_close">关闭</string>
+    <string name="scan_success">已导入中转配置 ✅</string>
+    <string name="scan_success_full">已导入整套配置 ✅</string>
+    <string name="menu_scan">扫一扫</string>
+    <string name="scan_title">扫一扫</string>
+    <string name="scan_hint2">将二维码放入框内，即可自动扫描</string>
+    <string name="scan_torch_on">🔦 轻触开灯</string>
+    <string name="scan_torch_off">🔦 关闭手电筒</string>
+    <string name="scan_failed">二维码无效或未识别 ❌</string>
+    <string name="scan_cancelled">已取消扫描</string>
+    <string name="qr_need_config">请先填写 Worker 地址与 Token</string>
+    <string name="scan_prompt">将配置二维码对准取景框</string>
+
+    <!-- 运行模式 / run mode -->
+    <string name="section_mode">运行模式</string>
+    <string name="mode_relay">中转模式</string>
+    <string name="mode_direct">手机直连</string>
+    <string name="mode_relay_hint">经你的 Cloudflare Worker / relay 中转分发。Telegram、Discord 等国内被墙的平台必须用此模式。</string>
+    <string name="mode_direct_hint">手机直接发往各 IM，无需任何服务器。适合飞书、邮件、Bark、企业微信等国内可直达平台。</string>
+
+    <!-- IM 渠道（直连模式）/ channels (direct mode) -->
+    <string name="section_channels">IM 渠道</string>
+    <string name="direct_channels_count">已配置 %1$d 个渠道</string>
+    <string name="btn_configure_channels">⚙️ 配置 IM 渠道</string>
+    <string name="ch_title">IM 渠道配置</string>
+    <string name="ch_intro">手机直连模式：填好任意渠道 → 点「测试发送」当场验证 → 点「保存」。无需服务器。\n⚠️ Telegram/Discord/Slack 在国内需手机能连上其服务器（如已挂代理）。</string>
+    <string name="ch_save">💾 保存全部</string>
+    <string name="ch_export_qr">🔳 导出配置二维码</string>
+    <string name="ch_scan_import">📷 扫码导入配置</string>
+    <string name="ch_qr_title">配置二维码（含全部渠道）</string>
+    <string name="ch_qr_hint">用另一台手机的 HedwigSMS 点「📷 扫码导入配置」扫描，即可整套同步。\n⚠️ 含全部密钥，请勿外传或截图分享。</string>
+    <string name="ch_qr_close">关闭</string>
+    <string name="ch_scan_ok">已导入整套配置 ✅</string>
+    <string name="ch_scan_fail">二维码无效或非配置码 ❌</string>
+    <string name="ch_scan_cancelled">已取消扫描</string>
+    <string name="ch_test">📨 测试发送</string>
+    <string name="ch_saved">已保存 ✅</string>
+    <string name="ch_sending">发送中…</string>
+    <string name="ch_querying">查询中…</string>
+    <string name="ch_test_ok">✅ 测试消息已发送，请到对应 App 查收</string>
+    <string name="ch_test_fail">❌ %1$s</string>
+    <string name="ch_need_token">请先填写 Bot Token</string>
+    <string name="ch_tg_discover">🔎 自动获取 chat_id</string>
+    <string name="ch_tg_none">未发现会话，请先给 @%1$s 发一句话再点此</string>
+    <string name="ch_tg_found">@%1$s · 发现 %2$d 个会话，点下面选一个 👇</string>
+    <string name="ch_feishu_secret">签名密钥 Sign Secret（可选）</string>
+    <string name="ch_custom_name">通用 Webhook</string>
+    <string name="ch_custom_hint">可对接 Bark / Server酱 / 企业微信 / 钉钉 / n8n 等</string>
+    <string name="ch_email_from">发件 From（已验证域名地址）</string>
+    <string name="ch_email_to">收件 To（逗号分隔）</string>
+    <string name="type_feishu_name">飞书</string>
+
+    <!-- 控制 / control -->
+    <string name="section_control">② 服务控制</string>
+    <string name="btn_start">启动守护</string>
+    <string name="btn_stop">停止</string>
+    <string name="btn_test">📨 发送测试消息</string>
+    <string name="btn_simulate_sms">🧪 模拟收到短信（测试转发）</string>
+    <string name="sim_sms_sender">10086（模拟 / Simulated）</string>
+    <string name="sim_sms_sim">卡2 · 中国移动 · 138****8888（模拟）</string>
+    <string name="sim_sms_body">【HedwigSMS】您的验证码为 886623，5 分钟内有效，请勿泄露。本条由「模拟收到短信」功能发出，用于测试转发链路。</string>
+    <string name="sim_sms_toast">已模拟一条短信，正在走转发流程…</string>
+    <string name="test_label">测试消息 / Test</string>
+    <string name="status_label">状态更新 / Status</string>
+
+    <!-- 权限 / permissions -->
+    <string name="section_permissions">③ 权限与保活</string>
+    <string name="perm_hint">为保证短信实时转发，请逐项授予权限，并关闭本应用的电池优化。</string>
+    <string name="btn_perm_sms">授予「接收短信」权限</string>
+    <string name="btn_perm_notif">授予「通知」权限</string>
+    <string name="btn_perm_battery">关闭电池优化（强烈建议）</string>
+    <string name="btn_perm_sim">授予「读取 SIM 卡信息」（多卡识别接收号码）</string>
+
+    <!-- 日志 / logs -->
+    <string name="section_logs">④ 转发日志（最近 50 条）</string>
+    <string name="logs_empty">暂无记录。配置完成后点「发送测试消息」试试。</string>
+
+    <!-- 事件类型 / event types -->
+    <string name="type_sms">短信</string>
+    <string name="type_battery_low">低电量</string>
+    <string name="type_power_connected">已插电</string>
+    <string name="type_power_disconnected">已断电</string>
+    <string name="type_heartbeat">心跳</string>
+
+    <!-- 其它 / misc -->
+    <string name="err_not_configured">未配置 Worker 地址或 Token</string>
+    <string name="privacy_note">🔒 隐私承诺：全本地运行、零数据收集、纯净无广告、完全开源。短信仅发送至你自己配置的 Worker。</string>
+
+    <!-- 磁贴 / 小插件 / QS tile & widget -->
+    <string name="tile_label">Hedwig 守护</string>
+    <string name="widget_start">▶ 启动守护</string>
+    <string name="widget_stop">⏸ 停止守护</string>
+    <string name="widget_desc">显示守护状态与电量，快速启停转发器</string>
+
+    <!-- ============ 顶栏菜单 / top bar ============ -->
+    <string name="menu_help">帮助</string>
+    <string name="action_back">返回</string>
+
+    <!-- ============ 新手引导 / onboarding ============ -->
+    <string name="ob_skip">跳过</string>
+    <string name="ob_next">下一步</string>
+    <string name="ob_prev">上一步</string>
+    <string name="ob_done">开始使用 🚀</string>
+
+    <string name="ob_p1_title">欢迎使用 海德薇短信转发</string>
+    <string name="ob_p1_body">把国内备用机的短信验证码、电量与停电告警，实时转发到你海外常用的 IM（Telegram / 飞书 / Discord / Slack / 邮件）。\n\n🔒 全本地运行\n🚫 零数据收集 · 纯净无广告\n📖 完全开源（MIT）</string>
+
+    <string name="ob_p2_title">它是如何工作的？</string>
+    <string name="ob_p2_body">📱 备用机 App 监听事件\n　　↓ 加密上报\n☁️ 你自己的 Cloudflare Worker 排版并分发\n　　↓\n💬 Telegram / 飞书 / Discord / Slack / 邮件\n\n会转发这 5 类事件：\n📩 新短信　🪫 低电量　⚡️ 断电\n🔌 插电　💚 每日「平安报告」</string>
+
+    <string name="ob_p3_title">第一步 · 部署云端 Worker</string>
+    <string name="ob_p3_body">① 打开 Cloudflare → Workers &amp; Pages → 创建 Worker\n② 把项目里 worker/index.single.js 的全部内容粘贴进在线编辑器，点 Deploy\n③ 在 Settings → Variables 添加：\n　• AUTH_TOKEN（自定义一个长口令）\n　• 至少一个渠道，如 TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID\n④ 复制 Worker 网址（形如 https://xxx.workers.dev）\n\n💡 不熟悉？右上角「帮助」里有完整图文步骤与全部环境变量说明。</string>
+
+    <string name="ob_p4_title">第二步 · 在本机填写配置</string>
+    <string name="ob_p4_body">回到本 App 的「① 云端配置」：\n\n⚡️ 最快：在电脑用 tools/setup-qr.html 生成二维码，点「📷 扫码导入配置」一扫即填好！\n\n或手动：\n① 填入 Worker 网址 与 Token（Token 必须与 AUTH_TOKEN 完全一致）\n② 设置设备名称（如「家里备用机」）\n③ 点「保存配置」，再点「📨 发送测试消息」\n\n✅ 若你的 IM 立刻收到「设备平安报告」，恭喜，全链路已打通！\n❌ 收不到？401=Token 不一致；400=网址写错；500=没配渠道。</string>
+
+    <string name="ob_p5_title">第三步 · 授予权限 + 保活</string>
+    <string name="ob_p5_body">为保证 7×24 小时稳定运行，请在「③ 权限与保活」依次：\n① 授予「接收短信」权限\n② 授予「通知」权限（Android 13+）\n③ 点「关闭电池优化」，在弹窗里选择「允许」\n\n⚠️ 国产系统额外重要：进入 系统设置 → 应用 → 本应用，打开「自启动 / 允许后台活动 / 后台无限制」（小米、华为、OPPO、vivo、三星等）。</string>
+
+    <string name="ob_p6_title">一切就绪！🦉</string>
+    <string name="ob_p6_body">在「② 服务控制」点「启动守护」。\n通知栏出现 🟢「Hedwig 正在守护中」即代表正在运行：\n\n• 转发时通知会瞬间变为 🔄「正在转发…」\n• 若失败会显示 ⚠️ 提醒，请检查网络\n• 每天会自动发一条 💚 平安报告\n\n随时可在右上角「帮助」查看详细说明。愿海德薇为你准时送信！</string>
+
+    <!-- ============ 帮助页 / help ============ -->
+    <string name="help_intro">HedwigSMS 是一个开源的短信转发系统：备用机 App 监听短信/电量/电源事件，加密上报到你自己的 Cloudflare Worker，再由 Worker 分发到你常用的 IM。下面是完整使用说明。</string>
+
+    <string name="help_s1_title">🚀 快速上手（5 分钟）</string>
+    <string name="help_s1_body">1) 云端：在 Cloudflare 创建一个 Worker，粘贴 worker/index.single.js 并 Deploy。\n2) 在 Worker 的 Settings → Variables 配置 AUTH_TOKEN 和至少一个渠道。\n3) 复制 Worker 网址。\n4) 在本 App 填 网址 + Token + 设备名 → 保存 → 发送测试消息。\n5) 授权 + 关闭电池优化 → 启动守护。</string>
+
+    <string name="help_s2_title">🔑 环境变量（在 Worker 后台配置）</string>
+    <string name="help_s2_body">• AUTH_TOKEN（必填）：访问口令，需与 App 中 Token 一致。\n• TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID：Telegram 机器人。\n• FEISHU_WEBHOOK_URL（+ 可选 FEISHU_SIGN_SECRET）：飞书自定义机器人。\n• DISCORD_WEBHOOK_URL：Discord 频道 Webhook。\n• SLACK_WEBHOOK_URL：Slack Incoming Webhook。\n• CUSTOM_WEBHOOK_URL：通用，可对接 Bark / Server酱 / 企业微信 / 钉钉 / n8n。\n• RESEND_API_KEY + EMAIL_FROM + EMAIL_TO：邮件（via Resend）。\n\n至少配置一个渠道即可。</string>
+
+    <string name="help_s3_title">❓ 常见问题</string>
+    <string name="help_s3_body">• 收不到转发？确认已授予「接收短信」、已关闭电池优化、已点「启动守护」，并先用「发送测试消息」验证云端链路。\n• 熄屏一会就失效？国产系统需在「自启动 / 后台无限制」里额外放行本应用。\n• 测试消息报错？401=Token 与 AUTH_TOKEN 不一致；400=网址写错；500=Worker 未配置任何渠道。\n• 每天几点发平安报告？默认每天 09:00，由 App 用闹钟触发。</string>
+
+    <string name="help_s4_title">🔒 隐私与安全</string>
+    <string name="help_s4_body">• 零收集：无任何统计 SDK、无广告，不向作者服务器发送任何数据。\n• 全本地：短信只发往你自己部署的 Worker；Worker 代码开源可审计。\n• 加密存储：网址与 Token 通过 EncryptedSharedPreferences（AES-256）加密保存在本机。</string>
+
+    <string name="help_s5_title">ℹ️ 关于</string>
+    <string name="help_s5_body">HedwigSMS · 开源（MIT）\n作者：Haowei Cao · https://chwjh.com\n多渠道分发设计参考 OpenClaw (MIT)。</string>
+
+    <string name="help_replay">重新查看新手引导</string>
+    <string name="help_check_update">检查更新</string>
+    <string name="help_version">当前版本 v%1$s</string>
+
+    <!-- 更新 / update -->
+    <string name="update_title">发现新版本 %1$s</string>
+    <string name="update_download">前往下载</string>
+    <string name="update_later">稍后</string>
+    <string name="update_checking">正在检查更新…</string>
+    <string name="update_latest">已是最新版本 ✅</string>
+    <string name="update_failed">检查更新失败：%1$s</string>
+    <string name="update_not_configured">尚未配置更新源（需开发者设置 GitHub 仓库）</string>
+</resources>

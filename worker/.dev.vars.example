@@ -1,0 +1,27 @@
+# 本地开发用变量 / local dev vars — 复制为 .dev.vars 后填写，勿提交 .dev.vars！
+# Copy to .dev.vars and fill in. DO NOT commit .dev.vars.
+# 然后运行 / then run: wrangler dev
+
+AUTH_TOKEN="change-me-to-a-long-random-string"
+
+# --- Telegram ---
+TELEGRAM_BOT_TOKEN=""
+TELEGRAM_CHAT_ID=""
+
+# --- 飞书 / Feishu ---
+FEISHU_WEBHOOK_URL=""
+FEISHU_SIGN_SECRET=""
+
+# --- Discord ---
+DISCORD_WEBHOOK_URL=""
+
+# --- Slack ---
+SLACK_WEBHOOK_URL=""
+
+# --- 通用自定义 Webhook / generic webhook ---
+CUSTOM_WEBHOOK_URL=""
+
+# --- Email (via Resend) ---
+RESEND_API_KEY=""
+EMAIL_FROM=""
+EMAIL_TO=""

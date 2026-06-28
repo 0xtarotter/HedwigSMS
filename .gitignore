@@ -1,0 +1,39 @@
+# ===== Android =====
+android/.gradle/
+android/build/
+android/app/build/
+android/captures/
+android/.idea/
+android/local.properties
+android/.kotlin/
+*.iml
+*.apk
+*.aab
+# 发布签名相关，切勿提交 / release signing — never commit
+*.keystore
+*.jks
+keystore.properties
+android/keystore.properties
+
+# ===== 构建产物 / build artifacts =====
+dist/
+
+# ===== IDE =====
+.idea/
+.vscode/
+*.hprof
+
+# ===== Node / Cloudflare Worker =====
+worker/node_modules/
+worker/.wrangler/
+worker/.dev.vars
+worker/dist/
+
+# ===== Local relay =====
+relay/node_modules/
+relay/.env
+
+# ===== misc =====
+.DS_Store
+*.log
+/references
