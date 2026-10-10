@@ -80,5 +80,5 @@ Initial release by [Haowei Cao](https://chwjh.com).
   Discord, Slack, Email via Resend, generic webhook), 5 event types, multi-SIM
   awareness, widget, Quick Settings tile, QR scan-to-configure, in-app update check.
 
-[1.1.0]: https://github.com/0xtarotter/HedwigSMS/compare/v1.0.0...v1.1.0
+[1.1.0]: https://github.com/0xtarotter/HedwigSMS/releases/tag/v1.1.0
 [1.0.0]: https://github.com/hcao10/HedwigSMS/releases/tag/v1.0.0
