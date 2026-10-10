@@ -73,6 +73,16 @@
     <string name="ch_custom_hint">Works with Bark / ServerChan / WeCom / DingTalk / n8n</string>
     <string name="ch_email_from">From (verified domain address)</string>
     <string name="ch_email_to">To (comma-separated)</string>
+    <string name="ch_smtp_name">SMTP Email</string>
+    <string name="ch_smtp_host">SMTP host (e.g. smtp.qq.com)</string>
+    <string name="ch_smtp_port">Port (blank = auto 465/587/25)</string>
+    <string name="ch_smtp_user">Username (usually your email)</string>
+    <string name="ch_smtp_pass">Password / app password</string>
+    <string name="ch_smtp_from">From (your sender address)</string>
+    <string name="ch_smtp_security">Encryption</string>
+    <string name="ch_smtp_sec_ssl">SSL (465)</string>
+    <string name="ch_smtp_sec_starttls">STARTTLS (587)</string>
+    <string name="ch_smtp_sec_none">None (25)</string>
     <string name="type_feishu_name">Feishu</string>
 
     <string name="section_control">② Service control</string>
@@ -119,6 +129,8 @@
     <string name="settings_title">Settings</string>
     <string name="set_auto_update">Auto-check updates on launch</string>
     <string name="set_boot_autostart">Auto-start guard on boot</string>
+    <string name="set_keep_alive">Keep-alive (auto-restart if killed)</string>
+    <string name="set_power_notify">Power status notifications (charge / outage)</string>
     <string name="set_heartbeat">Daily health report</string>
     <string name="set_notification">Persistent status notification (details)</string>
     <string name="set_daily_time">Daily report time</string>

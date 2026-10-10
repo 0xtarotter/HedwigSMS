@@ -78,6 +78,16 @@
     <string name="ch_custom_hint">可对接 Bark / Server酱 / 企业微信 / 钉钉 / n8n 等</string>
     <string name="ch_email_from">发件 From（已验证域名地址）</string>
     <string name="ch_email_to">收件 To（逗号分隔）</string>
+    <string name="ch_smtp_name">SMTP 邮件</string>
+    <string name="ch_smtp_host">SMTP 服务器（如 smtp.qq.com）</string>
+    <string name="ch_smtp_port">端口（留空按加密方式自动 465/587/25）</string>
+    <string name="ch_smtp_user">用户名（通常是邮箱）</string>
+    <string name="ch_smtp_pass">密码 / 授权码</string>
+    <string name="ch_smtp_from">发件 From（你的发件邮箱）</string>
+    <string name="ch_smtp_security">加密方式</string>
+    <string name="ch_smtp_sec_ssl">SSL (465)</string>
+    <string name="ch_smtp_sec_starttls">STARTTLS (587)</string>
+    <string name="ch_smtp_sec_none">无加密 (25)</string>
     <string name="type_feishu_name">飞书</string>
 
     <!-- 控制 / control -->
@@ -129,6 +139,8 @@
     <string name="settings_title">设置</string>
     <string name="set_auto_update">启动时自动检查更新</string>
     <string name="set_boot_autostart">开机自动启动守护</string>
+    <string name="set_keep_alive">后台保活（被杀后自动重启）</string>
+    <string name="set_power_notify">电源状态通知（充电 / 断电）</string>
     <string name="set_heartbeat">每日平安报告</string>
     <string name="set_notification">常驻状态通知（通知栏详情）</string>
     <string name="set_daily_time">每日报告时间</string>

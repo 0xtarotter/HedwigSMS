@@ -55,6 +55,8 @@ fun SettingsScreen(
 
     var autoUpdate by remember { mutableStateOf(prefs.autoCheckUpdate) }
     var bootStart by remember { mutableStateOf(prefs.bootAutoStart) }
+    var keepAlive by remember { mutableStateOf(prefs.keepAliveEnabled) }
+    var powerNotify by remember { mutableStateOf(prefs.powerNotifyEnabled) }
     var heartbeat by remember { mutableStateOf(prefs.heartbeatEnabled) }
     var notif by remember { mutableStateOf(prefs.notifDynamic) }
     var hbHour by remember { mutableStateOf(prefs.heartbeatHour) }
@@ -87,6 +89,16 @@ fun SettingsScreen(
                     HorizontalDivider()
                     SwitchRow(stringResource(R.string.set_boot_autostart), bootStart) {
                         bootStart = it; prefs.bootAutoStart = it
+                    }
+                    HorizontalDivider()
+                    SwitchRow(stringResource(R.string.set_keep_alive), keepAlive) {
+                        keepAlive = it; prefs.keepAliveEnabled = it
+                        if (it) com.hedwig.sms.alarm.KeepAliveScheduler.schedule(context)
+                        else com.hedwig.sms.alarm.KeepAliveScheduler.cancel(context)
+                    }
+                    HorizontalDivider()
+                    SwitchRow(stringResource(R.string.set_power_notify), powerNotify) {
+                        powerNotify = it; prefs.powerNotifyEnabled = it
                     }
                     HorizontalDivider()
                     SwitchRow(stringResource(R.string.set_heartbeat), heartbeat) {

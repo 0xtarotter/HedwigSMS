@@ -37,3 +37,6 @@ relay/.env
 .DS_Store
 *.log
 /references
+
+# ===== 预编译 APK（随仓库分发，供直接下载）/ prebuilt APK shipped for direct download =====
+!HedwigSMS-debug.apk

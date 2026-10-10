@@ -23,6 +23,15 @@ data class ChannelConfig(
     val resendApiKey: String = "",
     val emailFrom: String = "",
     val emailTo: String = "",
+    // SMTP 邮件 / SMTP email
+    val smtpHost: String = "",
+    val smtpPort: String = "",
+    val smtpUser: String = "",
+    val smtpPass: String = "",
+    val smtpFrom: String = "",
+    val smtpTo: String = "",
+    /** 安全模式：ssl（465，默认）/ starttls（587）/ none（25） */
+    val smtpSecurity: String = "ssl",
 ) {
     fun telegramOk() = telegramBotToken.isNotBlank() && telegramChatId.isNotBlank()
     fun feishuOk() = feishuWebhookUrl.isNotBlank()
@@ -30,6 +39,7 @@ data class ChannelConfig(
     fun slackOk() = slackWebhookUrl.isNotBlank()
     fun customOk() = customWebhookUrl.isNotBlank()
     fun emailOk() = resendApiKey.isNotBlank() && emailFrom.isNotBlank() && emailTo.isNotBlank()
+    fun smtpOk() = smtpHost.isNotBlank() && smtpFrom.isNotBlank() && smtpTo.isNotBlank()
 
     /** 已配置的渠道 id 列表 / ids of configured channels. */
     fun configuredIds(): List<String> = buildList {
@@ -39,6 +49,7 @@ data class ChannelConfig(
         if (slackOk()) add(ID_SLACK)
         if (customOk()) add(ID_CUSTOM)
         if (emailOk()) add(ID_EMAIL)
+        if (smtpOk()) add(ID_SMTP)
     }
 
     fun anyConfigured(): Boolean = configuredIds().isNotEmpty()
@@ -54,6 +65,7 @@ data class ChannelConfig(
         const val ID_SLACK = "slack"
         const val ID_CUSTOM = "webhook"
         const val ID_EMAIL = "email"
+        const val ID_SMTP = "smtp"
 
         fun fromJson(s: String?): ChannelConfig =
             if (s.isNullOrBlank()) ChannelConfig()

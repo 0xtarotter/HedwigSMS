@@ -254,6 +254,8 @@ const webhook = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         title: message.title,
+        // Bark 只认 body 作正文；补上以便 Bark 能显示完整内容 / Bark reads `body`, so include it.
+        body: message.text,
         text: message.text,
         type: payload.type,
         device_name: payload.device_name,

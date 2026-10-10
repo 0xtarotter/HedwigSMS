@@ -19,3 +19,23 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+## Fork notice / Fork 说明
+
+This repository (`0xtarotter/HedwigSMS`) is a community fork of the original
+HedwigSMS by Haowei Cao (https://chwjh.com). The original copyright above is
+retained. The following additions/modifications were made by 0xtarotter and are
+released under the same MIT License:
+
+本仓库（`0xtarotter/HedwigSMS`）是 Haowei Cao 原版 HedwigSMS 的社区 fork，保留上述
+原始版权声明。以下新增 / 修改由 0xtarotter 完成，同样以 MIT 许可发布：
+
+- SMTP email channel (Android direct mode + local relay)
+- Keep-alive watchdog scheduler (auto-restart when killed)
+- Power status notification toggle
+- Bark-compatible `body` field in webhook payloads
+- Version bump to 1.1.0
+
+Copyright (c) 2026 0xtarotter (https://github.com/0xtarotter)

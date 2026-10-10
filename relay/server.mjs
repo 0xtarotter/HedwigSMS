@@ -20,6 +20,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { formatMessage } from "../worker/src/format.js";
 import { channels } from "../worker/src/channels/index.js";
+import smtp from "./smtp.mjs";
+
+// relay 专属渠道（不进 Worker 共享表）/ relay-only channels (not in the shared Worker registry).
+const relayChannels = [...channels, smtp];
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const VALID_TYPES = new Set([
@@ -114,6 +118,15 @@ const CHANNEL_FIELDS = {
     { key: "RESEND_API_KEY", label: "Resend API Key", required: true },
     { key: "EMAIL_FROM", label: "发件 From", required: true },
     { key: "EMAIL_TO", label: "收件 To（逗号分隔/comma-separated）", required: true },
+  ] },
+  smtp: { name: "SMTP 邮件 / SMTP Email", fields: [
+    { key: "SMTP_HOST", label: "SMTP 服务器 Host", required: true },
+    { key: "SMTP_PORT", label: "端口 Port（留空自动/blank=auto）", required: false },
+    { key: "SMTP_USER", label: "用户名 User", required: false },
+    { key: "SMTP_PASS", label: "密码/授权码 Password", required: false },
+    { key: "SMTP_FROM", label: "发件 From", required: true },
+    { key: "SMTP_TO", label: "收件 To（逗号分隔）", required: true },
+    { key: "SMTP_SECURITY", label: "加密 ssl/starttls/none", required: false },
   ] },
 };
 
@@ -242,6 +255,27 @@ Fill any channel → “Test” to verify instantly → “Save” applies live 
   <div class="status" id="st_email"></div>
 </div>
 
+<div class="card">
+  <div class="ct">📮 SMTP 邮件 / SMTP Email</div>
+  <label>SMTP 服务器 Host（如 smtp.qq.com）</label>
+  <input id="SMTP_HOST" value="${escAttr(cur.SMTP_HOST)}" placeholder="smtp.qq.com" />
+  <label>端口 Port（留空按加密方式自动 465/587/25）</label>
+  <input id="SMTP_PORT" value="${escAttr(cur.SMTP_PORT)}" placeholder="465" />
+  <label>用户名 User（通常是邮箱）</label>
+  <input id="SMTP_USER" value="${escAttr(cur.SMTP_USER)}" placeholder="you@qq.com" />
+  <label>密码 / 授权码 Password</label>
+  <input id="SMTP_PASS" type="password" value="${escAttr(cur.SMTP_PASS)}" placeholder="授权码" />
+  <label>发件 From</label>
+  <input id="SMTP_FROM" value="${escAttr(cur.SMTP_FROM)}" placeholder="you@qq.com" />
+  <label>收件 To（逗号分隔）</label>
+  <input id="SMTP_TO" value="${escAttr(cur.SMTP_TO)}" placeholder="you@example.com" />
+  <label>加密方式 Security（ssl / starttls / none）</label>
+  <input id="SMTP_SECURITY" value="${escAttr(cur.SMTP_SECURITY) || 'ssl'}" placeholder="ssl" />
+  <div class="btnrow"><button class="primary" onclick="test('smtp',['SMTP_HOST','SMTP_PORT','SMTP_USER','SMTP_PASS','SMTP_FROM','SMTP_TO','SMTP_SECURITY'])">📨 测试发送</button></div>
+  <div class="status" id="st_smtp"></div>
+  <div class="sub" style="margin-top:8px">提示：需要先在本机执行 <code>npm install</code> 安装 nodemailer。</div>
+</div>
+
 <div class="save"><button class="primary" style="width:100%;padding:13px" onclick="saveAll()">💾 保存全部配置 / Save all</button>
 <div class="status" id="st_save"></div></div>
 </div>
@@ -327,7 +361,7 @@ export function createRelay({ port, token, env }) {
     if (req.method === "POST" && url.pathname === "/api/test") {
       try {
         const { channel, fields } = JSON.parse(await readBody(req));
-        const ch = channels.find((c) => c.id === channel);
+        const ch = relayChannels.find((c) => c.id === channel);
         if (!ch) return json({ ok: false, error: "unknown channel" });
         if (!ch.isConfigured(fields || {})) return json({ ok: false, error: "请填完必填项 / missing required fields" });
         const payload = {
@@ -379,7 +413,7 @@ export function createRelay({ port, token, env }) {
 
     // --- 格式化 + 分发 / format + dispatch ---
     const message = formatMessage(payload);
-    const active = channels.filter((c) => c.isConfigured(env));
+    const active = relayChannels.filter((c) => c.isConfigured(env));
     if (active.length === 0) {
       return json({ ok: false, error: "No channel configured. Set channel env vars in relay/.env." }, 500);
     }

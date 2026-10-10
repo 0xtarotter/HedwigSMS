@@ -15,9 +15,17 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import org.json.JSONObject
+import java.util.Properties
 import java.util.concurrent.TimeUnit
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
+import javax.mail.Authenticator
+import javax.mail.Message
+import javax.mail.PasswordAuthentication
+import javax.mail.Session
+import javax.mail.Transport
+import javax.mail.internet.InternetAddress
+import javax.mail.internet.MimeMessage
 
 /**
  * 手机直连分发 / On-phone direct dispatch.
@@ -56,6 +64,7 @@ object DirectDispatcher {
                     ChannelConfig.ID_SLACK -> sendSlack(config, msg.text)
                     ChannelConfig.ID_CUSTOM -> sendCustom(config, msg, payload)
                     ChannelConfig.ID_EMAIL -> sendEmail(config, msg)
+                    ChannelConfig.ID_SMTP -> sendSmtp(config, msg)
                     else -> throw IllegalArgumentException("unknown channel")
                 }
             } catch (e: Exception) {
@@ -135,6 +144,8 @@ object DirectDispatcher {
         payload.data.sim?.let { data.put("sim", it) }
         val body = JSONObject()
             .put("title", msg.title)
+            // Bark 只认 body 作正文；补上以便 bark 能显示完整内容 / Bark reads `body`.
+            .put("body", msg.text)
             .put("text", msg.text)
             .put("type", payload.type)
             .put("device_name", payload.deviceName)
@@ -174,5 +185,59 @@ object DirectDispatcher {
               </div>
             </div>
         """.trimIndent()
+    }
+
+    /**
+     * SMTP 邮件发送 / Send email over SMTP.
+     *
+     * 使用用户自备的 SMTP 服务器（如 QQ/163/Gmail），支持 SSL(465)、STARTTLS(587)、
+     * 明文/无加密(25) 三种安全模式。比 Resend 更自由，无需第三方账号。
+     * Uses the user's own SMTP server (QQ/163/Gmail, etc.); supports SSL (465),
+     * STARTTLS (587) and plain (25) modes — no third-party account needed.
+     */
+    private fun sendSmtp(c: ChannelConfig, msg: MessageFormatter.Formatted): Result {
+        return try {
+            val security = c.smtpSecurity.ifBlank { "ssl" }
+            val port = c.smtpPort.trim().ifBlank {
+                when (security) {
+                    "starttls" -> "587"
+                    "none" -> "25"
+                    else -> "465"
+                }
+            }
+            val props = Properties().apply {
+                put("mail.smtp.host", c.smtpHost.trim())
+                put("mail.smtp.port", port)
+                put("mail.smtp.auth", c.smtpUser.isNotBlank().toString())
+                when (security) {
+                    "starttls" -> put("mail.smtp.starttls.enable", "true")
+                    "none" -> { /* 明文 / plain */ }
+                    else -> put("mail.smtp.ssl.enable", "true")
+                }
+                // 仅信任该主机，提升自建/小众邮箱兼容性 / trust only this host for compatibility.
+                put("mail.smtp.ssl.trust", c.smtpHost.trim())
+                put("mail.smtp.connectiontimeout", "15000")
+                put("mail.smtp.timeout", "20000")
+                put("mail.smtp.writetimeout", "20000")
+            }
+            val session = Session.getInstance(props, object : Authenticator() {
+                override fun getPasswordAuthentication(): PasswordAuthentication =
+                    PasswordAuthentication(c.smtpUser.trim(), c.smtpPass)
+            })
+            val message = MimeMessage(session).apply {
+                setFrom(InternetAddress(c.smtpFrom.trim()))
+                val to: List<javax.mail.Address> = c.smtpTo.split(",")
+                    .map { it.trim() }
+                    .filter { it.isNotEmpty() }
+                    .map { InternetAddress(it) }
+                setRecipients(Message.RecipientType.TO, to.toTypedArray())
+                subject = "[HedwigSMS] ${msg.title}"
+                setContent(emailHtml(msg.title, msg.text), "text/html; charset=utf-8")
+            }
+            Transport.send(message)
+            Result(ChannelConfig.ID_SMTP, true, 0, null)
+        } catch (e: Exception) {
+            Result(ChannelConfig.ID_SMTP, false, 0, e.message ?: "SMTP error")
+        }
     }
 }

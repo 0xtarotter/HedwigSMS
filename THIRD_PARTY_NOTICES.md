@@ -67,3 +67,25 @@ zxing-android-embedded — Copyright (c) JourneyApps / Apache-2.0
 - AndroidX Security (EncryptedSharedPreferences) (Apache-2.0)
 - OkHttp — Square, Inc. (Apache-2.0)
 - kotlinx.serialization / kotlinx.coroutines — JetBrains (Apache-2.0)
+
+## JavaMail for Android (SMTP email)
+
+The in-app SMTP email channel (direct mode) uses **JavaMail for Android**.
+
+```
+com.sun.mail:android-mail / com.sun.mail:android-activation
+Copyright (c) Oracle and/or its affiliates.
+Licensed under the CDDL 1.0 / GPL 2.0 with Classpath Exception (via the Jakarta Mail project).
+```
+
+App 内的 SMTP 邮件渠道（直连模式）使用 **JavaMail for Android**。
+
+## Node / Worker dependencies
+
+- **Nodemailer** — the local relay's SMTP channel (`relay/smtp.mjs`) uses Nodemailer.
+  本地 relay 的 SMTP 渠道使用 Nodemailer。
+
+```
+Nodemailer — Copyright (c) Andris Reinman
+Licensed under the MIT License. https://github.com/nodemailer/nodemailer
+```

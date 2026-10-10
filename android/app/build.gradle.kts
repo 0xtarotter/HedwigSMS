@@ -24,8 +24,8 @@ android {
         applicationId = "com.hedwig.sms"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "1.1.0"
 
         vectorDrawables { useSupportLibrary = true }
     }
@@ -69,6 +69,8 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            // JavaMail (android-mail / android-activation) 有同名元数据 / duplicate META-INF from JavaMail jars
+            excludes += listOf("/META-INF/NOTICE.md", "/META-INF/LICENSE.md")
         }
     }
 }
@@ -100,4 +102,8 @@ dependencies {
 
     // 二维码扫描/生成（离线，无需 Google Play 服务）/ QR scan & generate (offline, no GMS)
     implementation(libs.zxing.android.embedded)
+
+    // SMTP 邮件 / SMTP email (JavaMail for Android)
+    implementation(libs.javamail.android)
+    implementation(libs.javamail.android.activation)
 }

@@ -102,6 +102,7 @@ class HedwigWidgetProvider : AppWidgetProvider() {
                         com.hedwig.sms.model.ChannelConfig.ID_SLACK -> "💬 Slack"
                         com.hedwig.sms.model.ChannelConfig.ID_CUSTOM -> "🔗 Webhook"
                         com.hedwig.sms.model.ChannelConfig.ID_EMAIL -> "✉️ Email"
+                        com.hedwig.sms.model.ChannelConfig.ID_SMTP -> "📮 SMTP"
                         else -> it
                     }
                 }

@@ -83,6 +83,16 @@ class SecurePrefs(context: Context) {
         get() = prefs.getBoolean(KEY_HB_ENABLED, true)
         set(v) = prefs.edit().putBoolean(KEY_HB_ENABLED, v).apply()
 
+    /** 后台保活：服务被杀后由看门狗自动重启 / keep-alive: watchdog auto-restarts the service. */
+    var keepAliveEnabled: Boolean
+        get() = prefs.getBoolean(KEY_KEEP_ALIVE, true)
+        set(v) = prefs.edit().putBoolean(KEY_KEEP_ALIVE, v).apply()
+
+    /** 电源状态通知（插电/断电）是否转发 / whether power connected/disconnected events are forwarded. */
+    var powerNotifyEnabled: Boolean
+        get() = prefs.getBoolean(KEY_POWER_NOTIFY, true)
+        set(v) = prefs.edit().putBoolean(KEY_POWER_NOTIFY, v).apply()
+
     /** 界面语言："" 跟随系统 / "zh" / "en" / app UI language. */
     var language: String
         get() = prefs.getString(KEY_LANG, "") ?: ""
@@ -121,6 +131,8 @@ class SecurePrefs(context: Context) {
         const val KEY_AUTO_UPDATE = "auto_update"
         const val KEY_BOOT_AUTOSTART = "boot_autostart"
         const val KEY_HB_ENABLED = "heartbeat_enabled"
+        const val KEY_KEEP_ALIVE = "keep_alive_enabled"
+        const val KEY_POWER_NOTIFY = "power_notify_enabled"
         const val KEY_LANG = "ui_language"
         const val KEY_NOTIF_DYNAMIC = "notif_dynamic"
 

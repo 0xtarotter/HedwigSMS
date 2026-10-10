@@ -14,6 +14,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.hedwig.sms.R
 import com.hedwig.sms.alarm.HeartbeatScheduler
+import com.hedwig.sms.alarm.KeepAliveScheduler
 import com.hedwig.sms.core.BatteryUtil
 import com.hedwig.sms.core.Constants
 import com.hedwig.sms.core.HedwigState
@@ -81,11 +82,32 @@ class HedwigForwardService : Service() {
         return START_STICKY
     }
 
+    /**
+     * 用户从最近任务划掉 App 时，若守护仍应运行则重新拉起服务（保活）。
+     * When the user swipes the app from recents, re-launch the service if it should keep running.
+     */
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        if (prefs.serviceEnabled && prefs.keepAliveEnabled && prefs.isConfigured()) {
+            val restart = Intent(applicationContext, HedwigForwardService::class.java).apply {
+                action = Constants.ACTION_START
+            }
+            runCatching {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(restart)
+                } else {
+                    startService(restart)
+                }
+            }
+        }
+        super.onTaskRemoved(rootIntent)
+    }
+
     /** 进入守护态：注册运行时广播 + 排定每日心跳 / enter guarding state. */
     private fun startGuarding() {
         prefs.serviceEnabled = true
         registerRuntimeReceiver()
         HeartbeatScheduler.schedule(this)
+        KeepAliveScheduler.schedule(this)
         HedwigState.setRunning(true)
         refreshGuardingNotification()
         syncWidgets()
@@ -113,6 +135,7 @@ class HedwigForwardService : Service() {
         prefs.serviceEnabled = false
         unregisterRuntimeReceiver()
         HeartbeatScheduler.cancel(this)
+        KeepAliveScheduler.cancel(this)
         HedwigState.setRunning(false)
         syncWidgets()
         stopForeground(STOP_FOREGROUND_REMOVE)
@@ -137,6 +160,12 @@ class HedwigForwardService : Service() {
         if (runtimeReceiver == null) startGuarding()
 
         val type = intent.getStringExtra(Constants.EXTRA_EVENT_TYPE) ?: return
+        // 电源状态通知开关关闭时，跳过插电/断电事件 / skip power events when the toggle is off.
+        if ((type == HedwigPayload.TYPE_POWER_CONNECTED || type == HedwigPayload.TYPE_POWER_DISCONNECTED) &&
+            !prefs.powerNotifyEnabled
+        ) {
+            return
+        }
         val battery = intent.getIntExtra(Constants.EXTRA_BATTERY_LEVEL, BatteryUtil.currentLevel(this))
         HedwigState.setBattery(BatteryUtil.currentLevel(this))
 

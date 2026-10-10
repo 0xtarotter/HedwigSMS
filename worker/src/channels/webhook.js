@@ -10,8 +10,10 @@
  *   CUSTOM_WEBHOOK_URL  目标地址 / target URL
  *
  * 发送的 JSON / Outgoing JSON:
- *   { "title": "...", "text": "...", "type": "...", "device_name": "...",
- *     "timestamp": 123, "data": {...} }
+ *   { "title": "...", "body": "...", "text": "...", "type": "...",
+ *     "device_name": "...", "timestamp": 123, "data": {...} }
+ * 说明 / Note: 额外带上 "body" 字段以兼容 Bark（Bark 只读 body 作正文）。
+ *   `body` is included for Bark compatibility (Bark reads `body` as the content).
  */
 
 const ID = "webhook";
@@ -26,6 +28,8 @@ async function send(env, message, payload) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       title: message.title,
+      // Bark 只认 body 作正文；补上以便 Bark 能显示完整内容 / Bark reads `body`, so include it.
+      body: message.text,
       text: message.text,
       type: payload.type,
       device_name: payload.device_name,

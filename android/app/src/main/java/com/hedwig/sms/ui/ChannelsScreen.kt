@@ -19,6 +19,7 @@ import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -40,6 +41,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hedwig.sms.R
@@ -69,6 +71,14 @@ fun ChannelsScreen(onBack: () -> Unit) {
     var resendKey by remember { mutableStateOf(initial.resendApiKey) }
     var emailFrom by remember { mutableStateOf(initial.emailFrom) }
     var emailTo by remember { mutableStateOf(initial.emailTo) }
+    // SMTP 邮件 / SMTP email
+    var smtpHost by remember { mutableStateOf(initial.smtpHost) }
+    var smtpPort by remember { mutableStateOf(initial.smtpPort) }
+    var smtpUser by remember { mutableStateOf(initial.smtpUser) }
+    var smtpPass by remember { mutableStateOf(initial.smtpPass) }
+    var smtpFrom by remember { mutableStateOf(initial.smtpFrom) }
+    var smtpTo by remember { mutableStateOf(initial.smtpTo) }
+    var smtpSecurity by remember { mutableStateOf(initial.smtpSecurity.ifBlank { "ssl" }) }
 
     var tgChats by remember { mutableStateOf<List<TelegramHelper.Chat>>(emptyList()) }
     // 每渠道状态：是否成功 + 文本 / per-channel status (ok, text)
@@ -89,6 +99,9 @@ fun ChannelsScreen(onBack: () -> Unit) {
                 discordUrl = c.discordWebhookUrl; slackUrl = c.slackWebhookUrl
                 customUrl = c.customWebhookUrl
                 resendKey = c.resendApiKey; emailFrom = c.emailFrom; emailTo = c.emailTo
+                smtpHost = c.smtpHost; smtpPort = c.smtpPort; smtpUser = c.smtpUser
+                smtpPass = c.smtpPass; smtpFrom = c.smtpFrom; smtpTo = c.smtpTo
+                smtpSecurity = c.smtpSecurity.ifBlank { "ssl" }
                 prefs.channelConfigJson = c.toJson()
                 if (scanned.config.device.isNotBlank()) prefs.deviceName = scanned.config.device
                 if (scanned.config.mode.isNotBlank()) prefs.mode = scanned.config.mode
@@ -113,6 +126,8 @@ fun ChannelsScreen(onBack: () -> Unit) {
         discordWebhookUrl = discordUrl, slackWebhookUrl = slackUrl,
         customWebhookUrl = customUrl,
         resendApiKey = resendKey, emailFrom = emailFrom, emailTo = emailTo,
+        smtpHost = smtpHost, smtpPort = smtpPort, smtpUser = smtpUser, smtpPass = smtpPass,
+        smtpFrom = smtpFrom, smtpTo = smtpTo, smtpSecurity = smtpSecurity,
     )
 
     fun save() {
@@ -250,6 +265,35 @@ fun ChannelsScreen(onBack: () -> Unit) {
                 TestButton { test(ChannelConfig.ID_EMAIL) }
             }
 
+            // ---- SMTP 邮件 ----
+            ChannelCard("📮 ${stringResource(R.string.ch_smtp_name)}", status[ChannelConfig.ID_SMTP]) {
+                Field(stringResource(R.string.ch_smtp_host), smtpHost) { smtpHost = it }
+                Field(stringResource(R.string.ch_smtp_port), smtpPort) { smtpPort = it }
+                Field(stringResource(R.string.ch_smtp_user), smtpUser) { smtpUser = it }
+                SecretField(stringResource(R.string.ch_smtp_pass), smtpPass) { smtpPass = it }
+                Field(stringResource(R.string.ch_smtp_from), smtpFrom) { smtpFrom = it }
+                Field(stringResource(R.string.ch_email_to), smtpTo) { smtpTo = it }
+                Text(
+                    stringResource(R.string.ch_smtp_security),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf(
+                        "ssl" to R.string.ch_smtp_sec_ssl,
+                        "starttls" to R.string.ch_smtp_sec_starttls,
+                        "none" to R.string.ch_smtp_sec_none,
+                    ).forEach { (value, label) ->
+                        FilterChip(
+                            selected = smtpSecurity == value,
+                            onClick = { smtpSecurity = value },
+                            label = { Text(stringResource(label)) },
+                        )
+                    }
+                }
+                TestButton { test(ChannelConfig.ID_SMTP) }
+            }
+
             Button(onClick = { save() }, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(R.string.ch_save))
             }
@@ -314,6 +358,16 @@ private fun Field(label: String, value: String, onValue: (String) -> Unit) {
     OutlinedTextField(
         value = value, onValueChange = onValue,
         label = { Text(label) }, singleLine = true,
+        modifier = Modifier.fillMaxWidth(),
+    )
+}
+
+@Composable
+private fun SecretField(label: String, value: String, onValue: (String) -> Unit) {
+    OutlinedTextField(
+        value = value, onValueChange = onValue,
+        label = { Text(label) }, singleLine = true,
+        visualTransformation = PasswordVisualTransformation(),
         modifier = Modifier.fillMaxWidth(),
     )
 }
