@@ -3,7 +3,7 @@
  * ======================================================================
  * - 中转入口:  POST /?token=<TOKEN>
  * - 后台入口:  GET/POST <ADMIN_PATH>   （默认 /admin）
- * - 定时报告:  Cron Trigger 触发 scheduled()
+ * - 定时播报由 App 端负责（AlarmManager），本 Worker 只做实时中转，不再自带定时任务。
  *
  * 环境变量 / ENV (可作为初始值，后台里可覆盖):
  *   AUTH_TOKEN           App 与转发请求共用的访问令牌（后台可重新生成覆盖）
@@ -15,7 +15,6 @@
  *   RESEND_API_KEY / EMAIL_FROM / EMAIL_TO
  * 绑定 / Bindings:
  *   HEDWIG_CONFIG        KV 命名空间，存储设置 / 日志
- *   (Cron Trigger)       建议每 5 分钟一次，用于定时报告
  *
  * Message dispatch payload shapes adapted from OpenClaw (MIT).
  */
@@ -95,10 +94,6 @@ const DEFAULT_CONFIG = {
     email: true,
   },
   channelConfig: {},
-  schedules: [
-    { type: "heartbeat", enabled: false, times: ["08:00", "20:00"] },
-    { type: "service_on", enabled: false, times: ["08:00"] },
-  ],
 };
 
 const COOKIE_NAME = "hedwig_sess";
@@ -179,16 +174,6 @@ function formatTime(ts) {
   return `${d.getUTCFullYear()}-${pad2(d.getUTCMonth() + 1)}-${pad2(d.getUTCDate())} ${pad2(d.getUTCHours())}:${pad2(d.getUTCMinutes())}:${pad2(d.getUTCSeconds())}`;
 }
 
-function nowHHMM() {
-  const d = beijingDate();
-  return `${pad2(d.getUTCHours())}:${pad2(d.getUTCMinutes())}`;
-}
-
-function nowDate() {
-  const d = beijingDate();
-  return `${d.getUTCFullYear()}-${pad2(d.getUTCMonth() + 1)}-${pad2(d.getUTCDate())}`;
-}
-
 /* ===================== 消息格式化 / formatting ===================== */
 
 function formatMessage(payload) {
@@ -196,7 +181,6 @@ function formatMessage(payload) {
   const time = formatTime(payload.timestamp);
   const data = payload.data || {};
   const sep = "———————————————";
-  const scheduled = data.scheduled ? "（定时播报）" : "";
 
   switch (payload.type) {
     case "sms": {
@@ -245,7 +229,7 @@ function formatMessage(payload) {
       return {
         title: "💚 设备平安报告 Daily Report",
         text:
-          `💚 设备平安报告 | Device Health Report ${scheduled}\n${sep}\n` +
+          `💚 设备平安报告 | Device Health Report\n${sep}\n` +
           `📱 设备 Device：${device}\n🔋 当前电量 Level：${level}%\n🌐 网络状态 Network：正常 OK\n🕒 时间 Time：${time}\n${sep}\n` +
           `🛡️ Hedwig 正在守护中 / Hedwig is on guard.`,
       };
@@ -255,7 +239,7 @@ function formatMessage(payload) {
       return {
         title: "✅ 守护已开启 Guard Started",
         text:
-          `✅ 守护已开启 | Guard Started ${scheduled}\n${sep}\n` +
+          `✅ 守护已开启 | Guard Started\n${sep}\n` +
           `📱 设备 Device：${device}\n🔋 当前电量 Level：${level}%\n🕒 时间 Time：${time}\n${sep}\n` +
           `🛡️ Hedwig 开始守护，短信将实时转发。`,
       };
@@ -447,29 +431,9 @@ function effectiveToken(env, cfg) {
 
 /* ======================= 设置存储 / config store ======================= */
 
-function normalizeTimes(input) {
-  const arr = String(input || "")
-    .split(/[\s,，]+/)
-    .map((s) => s.trim())
-    .filter((s) => /^([01]?\d|2[0-3]):[0-5]\d$/.test(s))
-    .map((s) => {
-      const [h, m] = s.split(":");
-      return `${pad2(h)}:${m}`;
-    });
-  return [...new Set(arr)].sort();
-}
-
 function mergeConfig(stored) {
   const s = stored && typeof stored === "object" ? stored : {};
   const d = DEFAULT_CONFIG;
-  const schedules = Array.isArray(s.schedules)
-    ? d.schedules.map((base) => {
-        const found = s.schedules.find((x) => x && x.type === base.type);
-        return found
-          ? { type: base.type, enabled: !!found.enabled, times: Array.isArray(found.times) ? found.times : base.times }
-          : { ...base };
-      })
-    : d.schedules.map((x) => ({ ...x }));
   return {
     version: 2,
     authToken: typeof s.authToken === "string" ? s.authToken : "",
@@ -484,7 +448,6 @@ function mergeConfig(stored) {
     events: { ...d.events, ...(s.events || {}) },
     channels: { ...d.channels, ...(s.channels || {}) },
     channelConfig: s.channelConfig && typeof s.channelConfig === "object" ? s.channelConfig : {},
-    schedules,
   };
 }
 
@@ -678,19 +641,6 @@ function panelPage(cfg, env, msg, origin, adminPath) {
       </div>`;
   }).join("");
 
-  const schedRows = cfg.schedules
-    .map((s) => {
-      const meta = EVENT_META.find((x) => x[0] === s.type) || [s.type, s.type];
-      const disabled = cfg.events[s.type] === false;
-      return `<div class="ch">
-        <h3>${esc(meta[1])} <span class="badge">${s.times.length} 次/天</span>${disabled ? ' <span class="badge no" style="color:#fecaca">事件已被总开关关闭</span>' : ""}</h3>
-        <label class="sw" style="margin-bottom:8px"><input type="checkbox" name="sched:${s.type}:enabled" ${s.enabled ? "checked" : ""}><span>启用定时播报</span></label>
-        <label class="f">推送时间（每行一个，24 小时制，如 08:00）</label>
-        <textarea name="sched:${s.type}:times">${esc(s.times.join("\n"))}</textarea>
-      </div>`;
-    })
-    .join("");
-
   const eventOptions = EVENT_META.map(([k, label]) => `<option value="${k}">${label}</option>`).join("");
   const channelOptions = [
     `<option value="__all__">全部已启用渠道</option>`,
@@ -707,7 +657,7 @@ function panelPage(cfg, env, msg, origin, adminPath) {
     .join("") || `<p class="muted">暂无记录。</p>`;
 
   const pauseBanner = cfg.pauseAll
-    ? `<div class="msg warn">⚠️ 当前已「暂停全部推送」，所有事件与定时报告都不会发送。</div>`
+    ? `<div class="msg warn">⚠️ 当前已「暂停全部推送」，所有事件都不会发送。</div>`
     : "";
 
   return pageShell(
@@ -743,7 +693,7 @@ function panelPage(cfg, env, msg, origin, adminPath) {
 
       <div class="card">
         <h2>推送事件开关</h2>
-        <div class="sub">关闭的事件完全不会推送（定时报告也受此限制）。</div>
+        <div class="sub">关闭的事件完全不会推送。</div>
         <div class="grid">${events}</div>
       </div>
 
@@ -761,8 +711,7 @@ function panelPage(cfg, env, msg, origin, adminPath) {
 
       <div class="card">
         <h2>定时播报</h2>
-        <div class="sub">由 Worker 按北京时间（UTC+8）自动推送，每天按设定时间各发一次。</div>
-        ${schedRows}
+        <div class="sub">定时播报由 App 端负责（App「设置 → 每日平安报告」中配置时间）。本 Worker 只做实时中转。</div>
       </div>
 
       <div class="card">
@@ -889,46 +838,6 @@ async function handleRelay(request, env) {
   return json({ ok: result.ok, type: payload.type, results: result.results, error: result.error }, result.ok ? 200 : 502);
 }
 
-/* ======================= 定时任务 / cron ======================= */
-
-async function runScheduled(env) {
-  const cfg = await loadConfig(env);
-  if (cfg.pauseAll) return;
-  const hm = nowHHMM();
-  const date = nowDate();
-  const merged = resolveEnv(env, cfg);
-
-  for (const s of cfg.schedules) {
-    if (!s.enabled) continue;
-    if (cfg.events[s.type] === false) continue;
-    if (!Array.isArray(s.times) || !s.times.includes(hm)) continue;
-
-    const key = `cron:${date}:${s.type}:${hm}`;
-    let done = false;
-    try {
-      done = !!(await env.HEDWIG_CONFIG.get(key));
-    } catch {}
-    if (done) continue;
-    try {
-      await env.HEDWIG_CONFIG.put(key, "1", { expirationTtl: 172800 });
-    } catch {}
-
-    const payload = {
-      type: s.type,
-      device_name: cfg.deviceName || "备用机",
-      timestamp: Date.now(),
-      data: { battery_level: "?", scheduled: true },
-    };
-    const result = await dispatch(merged, cfg, payload);
-    await appendLog(env, {
-      time: formatTime(Date.now()),
-      type: s.type,
-      source: "定时",
-      results: result.results,
-    });
-  }
-}
-
 /* ======================= 后台 / admin ======================= */
 
 async function handleAdmin(request, env, adminPath) {
@@ -994,12 +903,6 @@ async function handleAdmin(request, env, adminPath) {
     }
     cfg.channelConfig = cc;
 
-    cfg.schedules = cfg.schedules.map((s) => ({
-      type: s.type,
-      enabled: form.get(`sched:${s.type}:enabled`) != null,
-      times: normalizeTimes(form.get(`sched:${s.type}:times`)),
-    }));
-
     const mi = Number(form.get("minIntervalSec"));
     cfg.minIntervalSec = Number.isFinite(mi) && mi > 0 ? Math.floor(mi) : 0;
     cfg.deviceName = String(form.get("deviceName") || "").slice(0, 60);
@@ -1052,9 +955,5 @@ export default {
     }
     if (request.method !== "POST") return json({ ok: false, error: "Method Not Allowed" }, 405);
     return handleRelay(request, env);
-  },
-
-  async scheduled(event, env, ctx) {
-    ctx.waitUntil(runScheduled(env));
   },
 };

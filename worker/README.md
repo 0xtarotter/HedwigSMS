@@ -4,7 +4,7 @@
 > 部署后打开 `https://<你的域名>/<ADMIN_PATH>`，用密码登录即可在线管理所有设置，**不必再为改一个开关去动环境变量或重新部署**。
 
 - 中转功能与原版完全一致：`POST /?token=<TOKEN>`，把 App 上报的事件排版后分发到各渠道。
-- 额外提供：登录后台、渠道在线配置、定时播报（Cron）、Token 重新生成、推送日志、暂停全部等。
+- 额外提供：登录后台、渠道在线配置、Token 重新生成、推送日志、暂停全部等。
 
 > 只想用最简单的单文件中转、不要后台？用 [`index.single.js`](index.single.js)。
 > 想要模块化工程（多文件 `src/`）？用 [`src/`](src/)。三者互不冲突，按需选一个部署即可。
@@ -20,8 +20,8 @@
 | 🔀 事件开关 | 7 类事件（短信 / 低电量 / 断电 / 插电 / 平安报告 / 守护开启 / 守护停止）单独开关 |
 | 📡 渠道开关 | Telegram / 飞书 / Discord / Slack / 通用 Webhook / 邮件 各自启用或停用 |
 | ✏️ 渠道配置在线编辑 | 直接在后台填写或修改各渠道密钥/地址，保存即写入 KV，**可覆盖环境变量** |
-| ⏰ 定时播报 | 「平安报告」「守护开启」可设每天多个时间点自动推送（北京时间 UTC+8，由 Cron 触发，自带去重） |
-| ⏸️ 暂停全部推送 | 维护模式，一键停掉所有推送（含定时报告） |
+| ⏰ 定时播报 | 由 **App 端**负责（App「设置 → 每日平安报告」，AlarmManager 每天定时发一次）；Worker 只做实时中转 |
+| ⏸️ 暂停全部推送 | 维护模式，一键停掉所有推送 |
 | 📨 测试推送 | 选择任意事件 + 任意渠道，立即发一条测试消息 |
 | 🧾 推送日志 | 保留最近 20 条推送结果（时间 / 类型 / 来源 / 各渠道成功失败） |
 | 🔑 修改后台密码 | 后台内改密码（存 SHA-256，不落明文） |
@@ -77,14 +77,10 @@ ADMIN_PATH = "/admin"
 [[kv_namespaces]]
 binding = "HEDWIG_CONFIG"
 id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"   # ← 换成你自己的
-
-[triggers]
-crons = ["*/5 * * * *"]                     # 定时播报用，每 5 分钟检查一次
 ```
 
 - `name`：Worker 名称，可自定义。
 - `ADMIN_PATH`：后台入口路径，**务必改成别人猜不到的**（例如 `/h7x2k`）。
-- `crons`：定时任务频率，保持 `*/5 * * * *` 即可（每 5 分钟检查一次是否命中你设定的时间）。
 
 ### 3. 设置密钥（Secrets）
 
@@ -115,7 +111,7 @@ wrangler secret put EMAIL_TO
 wrangler deploy --config wrangler.admin.toml
 ```
 
-看到 `Uploaded hedwigsms` 和 `schedule: */5 * * * *` 即表示 Worker 与 Cron 都已上线。
+看到 `Uploaded hedwigsms` 即表示 Worker 已上线。
 
 ### 5. （可选）绑定自定义域名
 
@@ -186,11 +182,12 @@ Content-Type: application/json
 
 ## ⏰ 定时播报说明
 
-- 时间使用**北京时间（UTC+8）**，每个时间点每天各推一次。
-- 由 `[triggers] crons` 驱动（默认每 5 分钟检查一次），命中设定时间才推送。
-- 每条定时推送都用 KV 记录去重键（保留 2 天），避免 Cron 重试导致重复发送。
-- 若某事件在「推送事件开关」里被关闭，对应的定时播报也会停止。
-- 常见用法：平安报告设 `08:00` 与 `20:00`，即早晚各一次。
+定时播报**不在 Worker 端实现**，而是由 **App 端负责**：
+
+- App「设置 → 每日平安报告」可开启并设定一个时间点（AlarmManager 每天触发一次 `heartbeat`）。
+- App 到点后自行 `POST` 一条 `heartbeat` 给本 Worker，Worker 只负责实时转发。
+- 因此后台不再有「定时播报」设置；相关开关请到 **App 内**调整。
+- 好处：时间由手机本地时钟把控，Worker 无需 Cron，也就不受 Cron 频率（最短 1 分钟）与去重逻辑限制。
 
 ---
 
@@ -220,7 +217,7 @@ wrangler dev --config wrangler.admin.toml
 ```
 worker/
 ├── index.admin.js        # ★ 带后台控制台版（本文档对象）
-├── wrangler.admin.toml   # ★ 对应的部署配置（含 Cron）
+├── wrangler.admin.toml   # ★ 对应的部署配置
 ├── index.single.js       # 无后台的单文件中转版
 ├── wrangler.toml         # 单文件版配置
 ├── src/                  # 模块化工程版（channels/、format.js 等）

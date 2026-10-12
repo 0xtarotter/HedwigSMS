@@ -62,7 +62,7 @@ The "receiver" is simply the IM app you already use — there is nothing extra t
 3. Copy the Worker URL.
 4. In the app: **Relay mode** → fill Worker URL + Token (or **scan** the QR from [`tools/setup-qr.html`](tools/setup-qr.html)) → **Send test message** → grant permissions → **Start guard**.
 
-> 💡 Want a **web admin console** built into the Worker (edit channels online, scheduled reports, regenerate Token, push logs)? Use [`worker/index.admin.js`](worker/index.admin.js) — see [`worker/README.md`](worker/README.md).
+> 💡 Want a **web admin console** built into the Worker (edit channels online, regenerate Token, push logs, pause-all)? Use [`worker/index.admin.js`](worker/index.admin.js) — see [`worker/README.md`](worker/README.md).
 
 ### Option C — Local relay with auto public URL (BlueBubbles-style, zero account)
 

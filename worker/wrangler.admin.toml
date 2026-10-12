@@ -21,7 +21,3 @@ ADMIN_PATH = "/admin"
 [[kv_namespaces]]
 binding = "HEDWIG_CONFIG"
 id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID" # ← 替换为你自己的 KV namespace id（见 README 部署教程）
-
-[triggers]
-# 定时播报用的 Cron（每 5 分钟检查一次，命中设定时间才推送）/ cron for scheduled reports
-crons = ["*/5 * * * *"]

@@ -62,7 +62,7 @@ HedwigSMS App      →      Cloudflare Worker / 本地 relay   →   Telegram / 
 3. 复制 Worker 网址。
 4. App 里：「中转模式」→ 填 Worker 网址 + Token（或用 [`tools/setup-qr.html`](tools/setup-qr.html) 生成二维码**扫码导入**）→「发送测试消息」→ 授权 →「启动守护」。
 
-> 💡 想让 Worker 自带**网页后台**（在线改渠道、定时播报、重新生成 Token、查看推送日志）？用 [`worker/index.admin.js`](worker/index.admin.js)，部署见 [`worker/README.md`](worker/README.md)。
+> 💡 想让 Worker 自带**网页后台**（在线改渠道、重新生成 Token、查看推送日志、暂停全部）？用 [`worker/index.admin.js`](worker/index.admin.js)，部署见 [`worker/README.md`](worker/README.md)。
 
 ### 方式 C —— 本地 relay 自动公网地址（BlueBubbles 式，零账号）
 
