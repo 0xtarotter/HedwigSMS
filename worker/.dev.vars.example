@@ -4,6 +4,10 @@
 
 AUTH_TOKEN="change-me-to-a-long-random-string"
 
+# --- 后台控制台 / admin console (仅 index.admin.js 需要) ---
+ADMIN_PASSWORD="change-me-to-a-strong-password"
+ADMIN_PATH="/admin"
+
 # --- Telegram ---
 TELEGRAM_BOT_TOKEN=""
 TELEGRAM_CHAT_ID=""

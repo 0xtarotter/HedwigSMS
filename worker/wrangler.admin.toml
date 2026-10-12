@@ -1,0 +1,27 @@
+# HedwigSMS 后台控制台版 Worker 配置 / admin-console worker config
+# ==================================================================
+# 使用步骤 / Usage:
+#   1. 创建 KV:   wrangler kv namespace create HEDWIG_CONFIG
+#                然后把它返回的 id 填到下面 [[kv_namespaces]] 的 id
+#   2. 设置密钥:  wrangler secret put AUTH_TOKEN
+#                 wrangler secret put ADMIN_PASSWORD
+#                （渠道密钥如 Telegram/飞书/Bark 可选，后台页面里也能直接填）
+#   3. 部署:      wrangler deploy --config wrangler.admin.toml
+#   4. 打开后台:  https://<你的域名>/<ADMIN_PATH>  用 ADMIN_PASSWORD 登录
+# ==================================================================
+
+name = "hedwigsms"
+main = "index.admin.js"
+compatibility_date = "2024-09-23"
+
+[vars]
+# 后台路径（登录后管理所有设置，建议改成只有你知道的路径）/ admin console path
+ADMIN_PATH = "/admin"
+
+[[kv_namespaces]]
+binding = "HEDWIG_CONFIG"
+id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID" # ← 替换为你自己的 KV namespace id（见 README 部署教程）
+
+[triggers]
+# 定时播报用的 Cron（每 5 分钟检查一次，命中设定时间才推送）/ cron for scheduled reports
+crons = ["*/5 * * * *"]
